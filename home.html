@@ -249,7 +249,7 @@
   </div>
 
   <div class="channels-panel">
-    <div class="channel-item active" onclick="loadStream('https://satoshi-cors.herokuapp.com/http://116.204.149.16/nagorik/tracks-v1a1/mono.m3u8', this)">
+    <div class="channel-item active" onclick="loadStream('http://116.204.149.16/nagorik/index.m3u8', this)">
       <div class="selected-channel-indicator">Selected</div>
       <div class="live-indicator">
         <div class="live-dot"></div>
@@ -338,11 +338,24 @@
       height: '100%',
       width: '100%',
       mute: false,
-      plugins: { core: [QualitySelector] }
+      plugins: { core: [QualitySelector] },
+      // ভিডিও প্লে করার জন্য গুরুত্বপূর্ণ সেটিংস
+      playback: {
+        playsinline: true,
+        preload: 'auto'
+      },
+      // ক্রস-অরিজিন ইস্যু ফিক্স করার জন্য
+      crossOrigin: 'anonymous',
+      hlsjsConfig: {
+        enableWorker: true,
+        liveSyncDurationCount: 3,
+        liveMaxLatencyDurationCount: 10
+      }
     };
 
     if (currentPlayer) {
       currentPlayer.configure(playerConfig);
+      currentPlayer.play();
     } else {
       currentPlayer = new Clappr.Player(playerConfig);
     }
@@ -358,6 +371,10 @@
       btn.textContent = 'আবার চেষ্টা করুন';
       if (navigator.onLine) {
         document.getElementById('no-connection').style.display = 'none';
+        // পুনরায় লোড করার চেষ্টা করুন
+        if (activeItem && currentPlayer) {
+          currentPlayer.play();
+        }
       }
     }, 1400);
   }
@@ -427,14 +444,40 @@
 
   window.addEventListener('offline', () => {
     document.getElementById('no-connection').style.display = 'flex';
+    if (currentPlayer && currentPlayer.isPlaying()) {
+      currentPlayer.pause();
+    }
   });
 
   window.addEventListener('online', () => {
     document.getElementById('no-connection').style.display = 'none';
+    // ওয়েবসাইট লোড হলে অটোমেটিক প্লে করার চেষ্টা করুন
+    if (currentPlayer && !currentPlayer.isPlaying()) {
+      setTimeout(() => {
+        currentPlayer.play().catch(e => {
+          console.log("Auto-play prevented, user interaction required");
+        });
+      }, 500);
+    }
   });
 
-  // প্রথম চ্যানেল অটো লোড করতে চাইলে এটা আনকমেন্ট করো
-  window.addEventListener('load', () => activeItem.click());
+  // পেজ লোড হলে প্রথম চ্যানেলটি অটোমেটিক লোড করুন
+  window.addEventListener('DOMContentLoaded', () => {
+    // প্রথম চ্যানেল লোড করা
+    setTimeout(() => {
+      loadStream(channelUrls[0], channelItems[0]);
+    }, 500);
+  });
+
+  // ব্রাউজার অটোপ্লে পলিসি ইস্যু সমাধান
+  document.addEventListener('click', function firstClick() {
+    if (currentPlayer && !currentPlayer.isPlaying()) {
+      currentPlayer.play().catch(e => {
+        console.log("User interaction needed for autoplay");
+      });
+    }
+    document.removeEventListener('click', firstClick);
+  });
 </script>
 </body>
 </html>
