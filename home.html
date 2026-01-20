@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Premium Live Channels</title>
-
+  <title>Live • Neo Stream</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.css">
-
   <style>
     :root {
-      --spacing-sm: 0.6rem;
-      --spacing-md: 1rem;
-      --spacing-lg: 1.2rem;
-      --card-radius: 28px;          /* আরেকটু বাড়ালাম → আরও গোল */
-      --blur: blur(14px);
-      --border-width: 3px;          /* border মোটা করা যায় চাইলে */
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --surface-hover: #1a1a24;
+      --accent: #5d5fff;
+      --text-primary: #f1f1f5;
+      --text-secondary: #a1a1b5;
+      --border: #222230;
+      --radius: 12px;
+      --spacing: 1.25rem;
     }
 
     * {
@@ -27,395 +27,448 @@
       box-sizing: border-box;
     }
 
-    html, body {
-      height: 100%;
+    body {
       font-family: 'Inter', system-ui, sans-serif;
-      color: #e0e0ff;
-      overflow: hidden;
-      background: #000000;
-    }
-
-    .layout-wrapper {
-      display: flex;
+      background: var(--bg);
+      color: var(--text-primary);
       height: 100vh;
-      width: 100vw;
-      background: transparent;
-    }
-
-    #player-container {
-      background: #000;
-    }
-
-    /* Mobile & Desktop layout (আগের মতোই রাখা) */
-    @media (max-width: 991px) {
-      .layout-wrapper { flex-direction: column; }
-      #player-section { width: 100%; height: auto; }
-      #player-container { width: 100%; aspect-ratio: 16 / 9; }
-      .scorecards-container {
-        flex: 1;
-        overflow-y: auto;
-        padding: var(--spacing-lg) var(--spacing-md);
-        background: rgba(0, 0, 0, 0.6);
-      }
-      .scorecards {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-md);
-      }
-    }
-
-    @media (min-width: 992px) {
-      #player-section { width: 68%; height: 100vh; }
-      #player-container { height: 100%; }
-      .scorecards-container {
-        width: 32%;
-        height: 100vh;
-        overflow-y: auto;
-        background: rgba(0, 0, 0, 0.65);
-        backdrop-filter: var(--blur);
-        border-left: 1px solid rgba(255,255,255,0.08);
-        padding: 1.8rem 1.2rem;
-      }
-      .scorecards {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-md);
-      }
-    }
-
-    .scorecard {
-      position: relative;
-      background: rgba(20, 20, 20, 0.7);
-      backdrop-filter: var(--blur) saturate(120%);
-      border-radius: var(--card-radius);
       overflow: hidden;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-      isolation: isolate; /* z-index layering-এর জন্য */
     }
 
-    /* Animated RGB border using pseudo-element */
-    .scorecard::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: var(--card-radius);
-      padding: var(--border-width);
-      background: linear-gradient(90deg, #ff3366, #33ffcc, #ff9933, #9933ff, #ff3366);
-      background-size: 400% 400%;
-      -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-      animation: rgbFlow 10s ease infinite;
-      z-index: -1;
-    }
-
-    @keyframes rgbFlow {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .scorecard:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-    }
-
-    .scorecard:hover::before {
-      animation-duration: 6s;
-    }
-
-    .scorecard.selected {
-      background: rgba(40, 40, 40, 0.8);
-      box-shadow: 0 0 40px rgba(255,255,255,0.2), inset 0 0 20px rgba(255,255,255,0.1);
-      transform: scale(1.015);
-    }
-
-    .scorecard.selected::before {
-      animation-duration: 8s;
-      background: linear-gradient(90deg, #ff3366, #33ffcc, #ff9933, #9933ff, #ff3366);
-    }
-
-    /* বাকি সব আগের মতোই */
-    .scorecard-inner {
-      padding: 1rem 0.8rem;
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .timer {
-      background: linear-gradient(90deg, #ff3366, #33ffcc, #ff9933, #9933ff, #ff3366);
-      background-size: 400% 400%;
-      color: white;
-      font-weight: 600;
-      padding: 0.35rem 0.9rem;
-      border-radius: 50px;
-      display: inline-block;
-      margin-bottom: 0.8rem;
-      font-size: 0.7rem;
-      letter-spacing: 0.4px;
-      box-shadow: 0 3px 12px rgba(255, 51, 102, 0.6);
-      animation: rgbFlow 10s ease infinite;
-    }
-
-    .teams {
+    .app-layout {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.8rem;
+      height: 100%;
     }
 
-    .team {
+    .player-section {
       flex: 1;
-      text-align: center;
-      height: 160px;
+      background: #000;
+      position: relative;
+    }
+
+    #player {
+      width: 100%;
+      height: 100%;
+    }
+
+    .channels-panel {
+      width: 340px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      padding: var(--spacing) 0;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      gap: var(--spacing);
     }
 
-    .team-name {
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin-top: 0.5rem;
-      color: #e0e0ff;
-      letter-spacing: 0.3px;
-    }
-
-    .logo-container {
-      width: 100%;
-      height: 140px;
+    .channel-item {
+      margin: 0 1rem;
+      padding: 1rem;
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.22s ease;
+      position: relative;
       overflow: hidden;
+    }
+
+    .channel-item:hover {
+      background: var(--surface-hover);
+      transform: translateY(-2px);
+    }
+
+    .channel-item.active {
+      background: rgba(93, 95, 255, 0.12);
+      box-shadow: 0 0 20px rgba(93, 95, 255, 0.3);
+      animation: rgb-border 4s infinite linear;
+    }
+
+    @keyframes rgb-border {
+      0% {
+        border-color: rgb(255, 0, 0);
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.6), 0 0 25px rgba(93, 95, 255, 0.3);
+      }
+      33% {
+        border-color: rgb(0, 255, 0);
+        box-shadow: 0 0 15px rgba(0, 255, 0, 0.6), 0 0 25px rgba(93, 95, 255, 0.3);
+      }
+      66% {
+        border-color: rgb(0, 0, 255);
+        box-shadow: 0 0 15px rgba(0, 0, 255, 0.6), 0 0 25px rgba(93, 95, 255, 0.3);
+      }
+      100% {
+        border-color: rgb(255, 0, 0);
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.6), 0 0 25px rgba(93, 95, 255, 0.3);
+      }
+    }
+
+    .channel-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text-primary);
+    }
+
+    .channel-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.9rem;
+    }
+
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: #ff4d4d;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #ff4d4d;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ff4d4d80;
+    }
+
+    .logos {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      gap: 1rem;
     }
 
     .logo {
-      width: 100%;
-      height: 100%;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
-      transition: transform 0.4s ease;
-      filter: drop-shadow(0 0 12px rgba(255,255,255,0.5));
-      animation: pulse-glow 6s infinite ease-in-out;
+      border-radius: 8px;
+      background: #1e1e2e;
+      padding: 0.4rem;
     }
 
-    @keyframes pulse-glow {
-      0%, 100% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)) brightness(1); transform: scale(1); }
-      50%      { filter: drop-shadow(0 0 28px rgba(255,255,255,0.85)) brightness(1.18); transform: scale(1.08); }
-    }
-
-    .scorecard:hover .logo {
-      transform: scale(1.12);
-    }
-
-    .divider {
-      font-size: 2.8rem;
-      color: rgba(200,200,200,0.4);
+    .vs {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
       font-weight: bold;
-      text-shadow: 0 0 10px rgba(255,255,255,0.3);
     }
 
-    #offline-screen {
+    #no-connection {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.98);
-      color: #fff;
+      background: rgba(10,10,15,0.98);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
+      color: var(--text-primary);
+      z-index: 1000;
       gap: 1.5rem;
-      backdrop-filter: blur(8px);
     }
 
     .retry-btn {
-      background: linear-gradient(90deg, #ff3366, #33ffcc, #ff9933, #9933ff, #ff3366);
-      background-size: 400% 400%;
+      background: var(--accent);
       color: white;
       border: none;
-      padding: 0.9rem 2.8rem;
+      padding: 0.9rem 2.2rem;
       border-radius: 50px;
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
-      animation: rgbFlow 12s ease infinite;
+      transition: all 0.25s;
     }
 
     .retry-btn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 15px 40px rgba(255, 51, 102, 0.8);
+      background: #4f51e5;
+      transform: translateY(-2px);
+    }
+
+    .remote-control-info {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.8);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      border: 1px solid var(--border);
+      max-width: 300px;
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+
+    .remote-control-info h4 {
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .key-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .key {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-family: monospace;
+      font-size: 0.75rem;
+    }
+
+    .selected-channel-indicator {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--accent);
+      color: white;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .channel-item.active .selected-channel-indicator {
+      display: block;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.7; }
+      50% { opacity: 1; }
+      100% { opacity: 0.7; }
+    }
+
+    @media (max-width: 992px) {
+      .app-layout {
+        flex-direction: column;
+      }
+      .player-section {
+        height: 40vh;
+      }
+      .channels-panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding: 1rem;
+      }
+      .remote-control-info {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
 
-<!-- HTML structure আগের মতোই (কোনো পরিবর্তন নেই) -->
-<div class="layout-wrapper">
-  <div id="player-section">
-    <div id="player-container"></div>
+<div class="app-layout">
+  <div class="player-section">
+    <div id="player"></div>
   </div>
 
-  <div class="scorecards-container">
-    <div class="scorecards" id="scorecards">
-
-      <div class="scorecard selected" tabindex="0" onclick="playVideo('https://satoshi-cors.herokuapp.com/http://116.204.149.16/nagorik/tracks-v1a1/mono.m3u8', this)">
-        <div class="scorecard-inner">
-          <div class="timer">BPL LIVE</div>
-          <div class="teams">
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://i.postimg.cc/8zQ0DYBH/20250720_201346.png" alt="Nagorik TV">
-              </div>
-              <div class="team-name">Nagorik TV</div>
-            </div>
-            <div class="divider">VS</div>
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGFic0ZWOr1sWDIctNOfTljhjD1Nt7StV3oA&s" alt="BPL">
-              </div>
-              <div class="team-name">BPL Live</div>
-            </div>
-          </div>
-        </div>
+  <div class="channels-panel">
+    <div class="channel-item active" data-channel="1" onclick="loadStream('https://satoshi-cors.herokuapp.com/http://116.204.149.16/nagorik/tracks-v1a1/mono.m3u8', this)">
+      <div class="selected-channel-indicator">Selected</div>
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        LIVE
       </div>
-
-      <!-- বাকি দুইটা scorecard একই রাখা -->
-
-      <div class="scorecard" tabindex="0" onclick="playVideo('https://bongoflixbd.top/tsports.m3u8?user=bongoflix&pass=eaminvai', this)">
-        <div class="scorecard-inner">
-          <div class="timer">T-SPORTS LIVE</div>
-          <div class="teams">
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://i.postimg.cc/VL5yTtwr/20250707_141739.png" alt="T-Sports">
-              </div>
-              <div class="team-name">T-Sports</div>
-            </div>
-            <div class="divider">VS</div>
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuESkW9Qwp1iXoGf-v_DMK_4fY3OKSfuOMi90qePoiaR-uWl9BsCRclcYBgz_E8-MGgbx83YurJLpf7MOFThEGHoaqiSMsKHDT9tHT_QVU2OSdTJpWDOqe4NiWFemb0tu72LMRe-Jabj8/w0/T-sports-live-Titas-Tv.png" alt="Liverpool">
-              </div>
-              <div class="team-name">Liverpool</div>
-            </div>
-          </div>
-        </div>
+      <div class="channel-title">Nagorik TV - BPL Live</div>
+      <div class="channel-desc">Bangladesh Premier League Streaming</div>
+      <div class="logos">
+        <img class="logo" src="https://i.postimg.cc/8zQ0DYBH/20250720_201346.png" alt="Nagorik">
+        <span class="vs">VS</span>
+        <img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGFic0ZWOr1sWDIctNOfTljhjD1Nt7StV3oA&s" alt="BPL">
       </div>
+    </div>
 
-      <div class="scorecard" tabindex="0" onclick="playVideo('http://alvetv.com/moviebanglatv/8080/index.m3u8', this)">
-        <div class="scorecard-inner">
-          <div class="timer">MOVIE BANGLA TV</div>
-          <div class="teams">
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://moviebangla.tv/wp-content/uploads/2024/06/moviebanglatv-logo-2.png" alt="Movie BD">
-              </div>
-              <div class="team-name">Movie BD</div>
-            </div>
-            <div class="divider">VS</div>
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4a-PRfaDnHZSR0_eAU0yOEaSIxqPyMW3mvg&s" alt="BD Movies">
-              </div>
-              <div class="team-name">BD Movies</div>
-            </div>
-          </div>
-        </div>
+    <div class="channel-item" data-channel="2" onclick="loadStream('https://bongoflixbd.top/tsports.m3u8?user=bongoflix&pass=eaminvai', this)">
+      <div class="selected-channel-indicator">Selected</div>
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        LIVE
       </div>
+      <div class="channel-title">T-Sports</div>
+      <div class="channel-desc">Cricket & Sports Live</div>
+      <div class="logos">
+        <img class="logo" src="https://i.postimg.cc/VL5yTtwr/20250707_141739.png" alt="T-Sports">
+        <span class="vs">VS</span>
+        <img class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuESkW9Qwp1iXoGf-v_DMK_4fY3OKSfuOMi90qePoiaR-uWl9BsCRclcYBgz_E8-MGgbx83YurJLpf7MOFThEGHoaqiSMsKHDT9tHT_QVU2OSdTJpWDOqe4NiWFemb0tu72LMRe-Jabj8/w0/T-sports-live-Titas-Tv.png" alt="Team">
+      </div>
+    </div>
 
+    <div class="channel-item" data-channel="3" onclick="loadStream('http://alvetv.com/moviebanglatv/8080/index.m3u8', this)">
+      <div class="selected-channel-indicator">Selected</div>
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        LIVE
+      </div>
+      <div class="channel-title">Movie Bangla TV</div>
+      <div class="channel-desc">Bangla Movies & Shows</div>
+      <div class="logos">
+        <img class="logo" src="https://moviebangla.tv/wp-content/uploads/2024/06/moviebanglatv-logo-2.png" alt="Movie BD">
+        <span class="vs">VS</span>
+        <img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4a-PRfaDnHZSR0_eAU0yOEaSIxqPyMW3mvg&s" alt="BD Movies">
+      </div>
     </div>
   </div>
 </div>
 
-<div id="offline-screen">
-  <h2>No Internet Connection</h2>
-  <p>Please check your WiFi or Mobile Data</p>
-  <button class="retry-btn" onclick="retryInternet(this)">Retry</button>
+<div id="no-connection">
+  <h2>ইন্টারনেট সংযোগ নেই</h2>
+  <p>ওয়াইফাই বা মোবাইল ডাটা চেক করুন</p>
+  <button class="retry-btn" onclick="checkConnection()">আবার চেষ্টা করুন</button>
+</div>
+
+<div class="remote-control-info">
+  <h4>রিমোট/কিবোর্ড কন্ট্রোল</h4>
+  <div>চ্যানেল নির্বাচন: <span class="key">1</span>, <span class="key">2</span>, <span class="key">3</span></div>
+  <div>চ্যানেল পরিবর্তন: <span class="key">↑</span>, <span class="key">↓</span>, <span class="key">←</span>, <span class="key">→</span></div>
+  <div>সিলেক্ট করুণ: <span class="key">Enter</span></div>
+  <div>প্লেয়ার কন্ট্রোল: <span class="key">Space</span> (প্লে/পজ), <span class="key">M</span> (মিউট)</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/ewwink/clappr-quality-selector-plugin@latest/quality-selector.js"></script>
 
 <script>
-// JavaScript আগের মতোই (কোনো পরিবর্তন নেই)
-let currentPlayer = null;
-let currentCard = null;
+  let currentPlayer = null;
+  let activeItem = document.querySelector('.channel-item.active');
+  let currentChannelIndex = 0;
+  const channelItems = document.querySelectorAll('.channel-item');
+  
+  // চ্যানেল ইউআরএল স্টোর করা
+  const channelUrls = [
+    'https://satoshi-cors.herokuapp.com/http://116.204.149.16/nagorik/tracks-v1a1/mono.m3u8',
+    'https://bongoflixbd.top/tsports.m3u8?user=bongoflix&pass=eaminvai',
+    'http://alvetv.com/moviebanglatv/8080/index.m3u8'
+  ];
 
-function playVideo(url, card) {
-  if (!navigator.onLine) {
-    document.getElementById("offline-screen").style.display = "flex";
-    return;
+  function loadStream(url, element) {
+    if (!navigator.onLine) {
+      document.getElementById('no-connection').style.display = 'flex';
+      return;
+    }
+
+    if (activeItem) activeItem.classList.remove('active');
+    element.classList.add('active');
+    activeItem = element;
+    
+    // বর্তমান চ্যানেল ইনডেক্স আপডেট করা
+    currentChannelIndex = Array.from(channelItems).indexOf(element);
+
+    const playerConfig = {
+      parentId: '#player',
+      source: url,
+      autoPlay: true,
+      height: '100%',
+      width: '100%',
+      mute: false,
+      plugins: { core: [QualitySelector] }
+    };
+
+    if (currentPlayer) {
+      currentPlayer.configure(playerConfig);
+    } else {
+      currentPlayer = new Clappr.Player(playerConfig);
+    }
   }
 
-  currentCard?.classList.remove('selected');
-  card.classList.add('selected');
-  currentCard = card;
+  function checkConnection() {
+    const btn = event.target;
+    btn.textContent = 'চেক করা হচ্ছে...';
+    btn.disabled = true;
 
-  const options = {
-    parentId: "#player-container",
-    source: url,
-    autoPlay: true,
-    mute: false,
-    volume: 0.9,
-    height: "100%",
-    width: "100%",
-    hideMediaControl: true,
-    chromeless: false,
-    mediacontrol: {
-      seekbar: "#ffffff",
-      buttons: "#e0e0ff",
-      background: "rgba(30, 30, 30, 0.8)"
-    },
-    plugins: { core: [QualitySelector] },
-    qualitySelectorConfig: { title: 'Quality', defaultQuality: -1 }
-  };
-
-  if (!currentPlayer) currentPlayer = new Clappr.Player(options);
-  else currentPlayer.configure(options);
-}
-
-function retryInternet(btn) {
-  btn.disabled = true;
-  btn.textContent = "Checking...";
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = "Retry";
-    if (navigator.onLine) document.getElementById("offline-screen").style.display = "none";
-  }, 1800);
-}
-
-window.addEventListener("load", () => {
-  if (!navigator.onLine) document.getElementById("offline-screen").style.display = "flex";
-});
-
-window.addEventListener("offline", () => document.getElementById("offline-screen").style.display = "flex");
-window.addEventListener("online", () => document.getElementById("offline-screen").style.display = "none");
-
-const cards = document.querySelectorAll(".scorecard");
-let focusedIndex = 0;
-cards[0]?.focus();
-
-document.addEventListener("keydown", e => {
-  if (e.key === "ArrowDown" || e.key === "ArrowRight") {
-    focusedIndex = (focusedIndex + 1) % cards.length;
-    cards[focusedIndex].focus();
-  } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
-    focusedIndex = (focusedIndex - 1 + cards.length) % cards.length;
-    cards[focusedIndex].focus();
-  } else if (e.key === "Enter" || e.key === " ") {
-    cards[focusedIndex].click();
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'আবার চেষ্টা করুন';
+      if (navigator.onLine) {
+        document.getElementById('no-connection').style.display = 'none';
+      }
+    }, 1400);
   }
-});
+
+  // কিবোর্ড কন্ট্রোল ফাংশন
+  function handleKeyboardControl(e) {
+    const key = e.key.toLowerCase();
+    
+    // রিমোট কন্ট্রোল: সংখ্যা কি দিয়ে সরাসরি চ্যানেল নির্বাচন
+    if (key >= '1' && key <= '3') {
+      const channelIndex = parseInt(key) - 1;
+      if (channelIndex < channelItems.length) {
+        selectChannel(channelIndex);
+        loadStream(channelUrls[channelIndex], channelItems[channelIndex]);
+      }
+    }
+    
+    // উপরে/নিচে তীর দিয়ে চ্যানেল পরিবর্তন
+    else if (key === 'arrowup' || key === 'arrowleft') {
+      e.preventDefault();
+      const newIndex = (currentChannelIndex - 1 + channelItems.length) % channelItems.length;
+      selectChannel(newIndex);
+    }
+    else if (key === 'arrowdown' || key === 'arrowright') {
+      e.preventDefault();
+      const newIndex = (currentChannelIndex + 1) % channelItems.length;
+      selectChannel(newIndex);
+    }
+    
+    // এন্টার দিয়ে চ্যানেল লোড করা
+    else if (key === 'enter') {
+      if (activeItem) {
+        loadStream(channelUrls[currentChannelIndex], activeItem);
+      }
+    }
+    
+    // স্পেসবার দিয়ে প্লে/পজ কন্ট্রোল
+    else if (key === ' ' && currentPlayer) {
+      e.preventDefault();
+      if (currentPlayer.isPlaying()) {
+        currentPlayer.pause();
+      } else {
+        currentPlayer.play();
+      }
+    }
+    
+    // M কি দিয়ে মিউট/আনমিউট
+    else if (key === 'm' && currentPlayer) {
+      e.preventDefault();
+      currentPlayer.mute(!currentPlayer.isMuted());
+    }
+  }
+
+  // চ্যানেল সিলেক্ট করা (লোড না করে শুধু হাইলাইট করা)
+  function selectChannel(index) {
+    if (activeItem) activeItem.classList.remove('active');
+    channelItems[index].classList.add('active');
+    activeItem = channelItems[index];
+    currentChannelIndex = index;
+    
+    // নির্বাচিত চ্যানেলটি ভিউতে আনা (স্ক্রোল করা)
+    channelItems[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // কিবোর্ড ইভেন্ট লিসেনার যোগ করা
+  document.addEventListener('keydown', handleKeyboardControl);
+
+  window.addEventListener('offline', () => {
+    document.getElementById('no-connection').style.display = 'flex';
+  });
+
+  window.addEventListener('online', () => {
+    document.getElementById('no-connection').style.display = 'none';
+  });
+
+  // প্রথম চ্যানেল অটো লোড করতে চাইলে এটা আনকমেন্ট করো
+  window.addEventListener('load', () => {
+    // প্রথম চ্যানেল লোড করা
+    loadStream(channelUrls[0], channelItems[0]);
+  });
 </script>
 </body>
 </html>
