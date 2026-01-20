@@ -31,30 +31,31 @@
       font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text-primary);
-      min-height: 100vh;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    /* Main container */
-    .container {
-      width: 100%;
-      max-width: 560px;
+    .app-layout {
       display: flex;
-      flex-direction: column;
-      gap: 20px;
+      height: 100%;
     }
 
-    /* Video player - fixed 560x315px */
     .player-section {
+      flex: 1;
+      background: #000;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .player-container {
       width: 560px;
       height: 315px;
       background: #000;
-      border-radius: var(--radius);
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
     }
 
     #player {
@@ -62,28 +63,19 @@
       height: 100%;
     }
 
-    /* Channels panel - directly below video player */
     .channels-panel {
-      width: 560px;
+      width: 340px;
       background: var(--surface);
-      border-radius: var(--radius);
-      padding: var(--spacing);
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: var(--spacing);
-      max-height: calc(100vh - 315px - 60px);
+      border-left: 1px solid var(--border);
       overflow-y: auto;
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE and Edge */
-      border: 1px solid var(--border);
-    }
-
-    /* Chrome, Safari, Opera */
-    .channels-panel::-webkit-scrollbar {
-      display: none;
+      padding: var(--spacing) 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing);
     }
 
     .channel-item {
+      margin: 0 1rem;
       padding: 1rem;
       background: var(--surface);
       border-radius: var(--radius);
@@ -91,16 +83,17 @@
       cursor: pointer;
       transition: all 0.22s ease;
       position: relative;
-      overflow: hidden;
     }
 
     .channel-item:hover {
       background: var(--surface-hover);
       transform: translateY(-2px);
+      border-color: var(--accent);
     }
 
     .channel-item.active {
       background: rgba(93, 95, 255, 0.12);
+      border-color: var(--accent);
       box-shadow: 0 0 20px rgba(93, 95, 255, 0.3);
       animation: rgb-border 4s infinite linear;
     }
@@ -207,11 +200,6 @@
       transform: translateY(-2px);
     }
 
-    /* রিমোট কন্ট্রোল UI লুকানো */
-    .remote-control-info {
-      display: none;
-    }
-
     .selected-channel-indicator {
       position: absolute;
       top: 10px;
@@ -226,68 +214,42 @@
 
     .channel-item.active .selected-channel-indicator {
       display: block;
-      animation: pulse 2s infinite;
     }
 
-    @keyframes pulse {
-      0% { opacity: 0.7; }
-      50% { opacity: 1; }
-      100% { opacity: 0.7; }
-    }
-
-    /* কীবোর্ড শর্টকাট টিপ্পনি - শুধু প্রথম বার শর্টকাট ব্যবহার করলে দেখাবে */
-    .keyboard-hint {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(93, 95, 255, 0.9);
-      color: white;
-      padding: 10px 15px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-      z-index: 100;
-      backdrop-filter: blur(5px);
-    }
-
-    .keyboard-hint.show {
-      opacity: 1;
-    }
-
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
+    @media (max-width: 992px) {
+      .app-layout {
+        flex-direction: column;
       }
-      
-      .container {
-        max-width: 100%;
-      }
-      
       .player-section {
+        height: 40vh;
+        padding: 20px;
+      }
+      .player-container {
         width: 100%;
+        max-width: 560px;
         height: auto;
         aspect-ratio: 16/9;
       }
-      
       .channels-panel {
         width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        padding: 1rem;
       }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <!-- Video Player - Fixed size 560x315px -->
+<div class="app-layout">
   <div class="player-section">
-    <div id="player"></div>
+    <div class="player-container">
+      <div id="player"></div>
+    </div>
   </div>
 
-  <!-- Channels Panel - Directly below video player -->
   <div class="channels-panel">
-    <div class="channel-item active" data-channel="1" onclick="loadStream('https://satoshi-cors.herokuapp.com/http://116.204.149.16/nagorik/tracks-v1a1/mono.m3u8', this)">
+    <div class="channel-item active" onclick="loadStream('https://satoshi-cors.herokuapp.com/http://116.204.149.16/nagorik/tracks-v1a1/mono.m3u8', this)">
       <div class="selected-channel-indicator">Selected</div>
       <div class="live-indicator">
         <div class="live-dot"></div>
@@ -302,7 +264,7 @@
       </div>
     </div>
 
-    <div class="channel-item" data-channel="2" onclick="loadStream('https://bongoflixbd.top/tsports.m3u8?user=bongoflix&pass=eaminvai', this)">
+    <div class="channel-item" onclick="loadStream('https://bongoflixbd.top/tsports.m3u8?user=bongoflix&pass=eaminvai', this)">
       <div class="selected-channel-indicator">Selected</div>
       <div class="live-indicator">
         <div class="live-dot"></div>
@@ -317,7 +279,7 @@
       </div>
     </div>
 
-    <div class="channel-item" data-channel="3" onclick="loadStream('http://alvetv.com/moviebanglatv/8080/index.m3u8', this)">
+    <div class="channel-item" onclick="loadStream('http://alvetv.com/moviebanglatv/8080/index.m3u8', this)">
       <div class="selected-channel-indicator">Selected</div>
       <div class="live-indicator">
         <div class="live-dot"></div>
@@ -340,20 +302,6 @@
   <button class="retry-btn" onclick="checkConnection()">আবার চেষ্টা করুন</button>
 </div>
 
-<!-- রিমোট কন্ট্রোল UI লুকানো আছে -->
-<div class="remote-control-info" style="display: none;">
-  <h4>রিমোট/কিবোর্ড কন্ট্রোল</h4>
-  <div>চ্যানেল নির্বাচন: <span class="key">1</span>, <span class="key">2</span>, <span class="key">3</span></div>
-  <div>চ্যানেল পরিবর্তন: <span class="key">↑</span>, <span class="key">↓</span>, <span class="key">←</span>, <span class="key">→</span></div>
-  <div>সিলেক্ট করুণ: <span class="key">Enter</span></div>
-  <div>প্লেয়ার কন্ট্রোল: <span class="key">Space</span> (প্লে/পজ), <span class="key">M</span> (মিউট)</div>
-</div>
-
-<!-- কীবোর্ড হিন্ট - শুধু প্রথম বার শর্টকাট ব্যবহার করলে দেখাবে -->
-<div class="keyboard-hint" id="keyboardHint">
-  কীবোর্ড শর্টকাট ব্যবহার করা হচ্ছে: সংখ্যা কি (1-3), তীর চিহ্ন (↑↓←→), Enter, Space, M
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/ewwink/clappr-quality-selector-plugin@latest/quality-selector.js"></script>
 
@@ -362,13 +310,11 @@
   let activeItem = document.querySelector('.channel-item.active');
   let currentChannelIndex = 0;
   const channelItems = document.querySelectorAll('.channel-item');
-  let keyboardHintShown = false;
-  let keyboardHintTimeout;
   
   // চ্যানেল ইউআরএল স্টোর করা
   const channelUrls = [
     'http://116.204.149.16/nagorik/index.m3u8',
-    'https://padmaonline.duckdns.org:8088/T-SportHD/index.m3u8',
+    'https://bongoflixbd.top/tsports.m3u8?user=bongoflix&pass=eaminvai',
     'http://alvetv.com/moviebanglatv/8080/index.m3u8'
   ];
 
@@ -416,27 +362,9 @@
     }, 1400);
   }
 
-  // কিবোর্ড হিন্ট দেখানো
-  function showKeyboardHint() {
-    if (keyboardHintShown) return;
-    
-    const hint = document.getElementById('keyboardHint');
-    hint.classList.add('show');
-    
-    clearTimeout(keyboardHintTimeout);
-    keyboardHintTimeout = setTimeout(() => {
-      hint.classList.remove('show');
-    }, 3000);
-    
-    keyboardHintShown = true;
-  }
-
   // কিবোর্ড কন্ট্রোল ফাংশন
   function handleKeyboardControl(e) {
     const key = e.key.toLowerCase();
-    
-    // প্রথমবার কীবোর্ড শর্টকাট ব্যবহার করলে হিন্ট দেখাবে
-    showKeyboardHint();
     
     // রিমোট কন্ট্রোল: সংখ্যা কি দিয়ে সরাসরি চ্যানেল নির্বাচন
     if (key >= '1' && key <= '3') {
@@ -505,11 +433,8 @@
     document.getElementById('no-connection').style.display = 'none';
   });
 
-  // প্রথম চ্যানেল অটো লোড
-  window.addEventListener('load', () => {
-    // প্রথম চ্যানেল লোড করা
-    loadStream(channelUrls[0], channelItems[0]);
-  });
+  // প্রথম চ্যানেল অটো লোড করতে চাইলে এটা আনকমেন্ট করো
+  window.addEventListener('load', () => activeItem.click());
 </script>
 </body>
 </html>
