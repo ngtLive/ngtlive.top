@@ -33,33 +33,51 @@
       color: var(--text-primary);
       height: 100vh;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .app-layout {
       display: flex;
+      flex-direction: column;
       height: 100%;
+      width: 100%;
     }
 
     .player-section {
       flex: 1;
       background: #000;
       position: relative;
+      min-height: 0; /* Important for proper flex scaling */
+      width: 100%;
+    }
+
+    /* 16:9 Aspect Ratio Container */
+    .player-container {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      background: #000;
     }
 
     #player {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
     }
 
     .channels-panel {
-      width: 340px;
       background: var(--surface);
-      border-left: 1px solid var(--border);
+      border-top: 1px solid var(--border);
       overflow-y: auto;
-      padding: var(--spacing) 0;
+      padding: var(--spacing);
       display: flex;
-      flex-direction: column;
       gap: var(--spacing);
+      height: 220px;
+      min-height: 220px;
       /* স্ক্রলবার লুকানো কিন্তু স্ক্রল কাজ করবে */
       scrollbar-width: none; /* Firefox */
       -ms-overflow-style: none; /* IE and Edge */
@@ -71,7 +89,8 @@
     }
 
     .channel-item {
-      margin: 0 1rem;
+      min-width: 280px;
+      max-width: 320px;
       padding: 1rem;
       background: var(--surface);
       border-radius: var(--radius);
@@ -80,6 +99,7 @@
       transition: all 0.22s ease;
       position: relative;
       overflow: hidden;
+      flex-shrink: 0;
     }
 
     .channel-item:hover {
@@ -223,7 +243,7 @@
       100% { opacity: 0.7; }
     }
 
-    /* কীবোর্ড শর্টকাট টিপ্পনি - শুধু হোভার বা ফোকাসে দেখাবে */
+    /* কীবোর্ড শর্টকাট টিপ্পনি - শুধু প্রথম বার শর্টকাট ব্যবহার করলে দেখাবে */
     .keyboard-hint {
       position: fixed;
       bottom: 20px;
@@ -244,18 +264,57 @@
       opacity: 1;
     }
 
-    @media (max-width: 992px) {
+    @media (min-width: 992px) {
+      /* ডেস্কটপে হরিজন্টাল থেকে ভার্টিকাল লে-আউট */
       .app-layout {
-        flex-direction: column;
+        flex-direction: row;
       }
+      
       .player-section {
-        height: 40vh;
+        height: 100%;
+        width: calc(100% - 340px);
       }
-      .channels-panel {
+      
+      .player-container {
+        height: 100%;
+        padding-bottom: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        border-left: none;
-        border-top: 1px solid var(--border);
-        padding: 1rem;
+      }
+      
+      .channels-panel {
+        width: 340px;
+        height: 100%;
+        border-top: none;
+        border-left: 1px solid var(--border);
+        flex-direction: column;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: var(--spacing) 0;
+      }
+      
+      .channel-item {
+        min-width: auto;
+        max-width: none;
+        margin: 0 var(--spacing);
+        width: calc(100% - 2 * var(--spacing));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .channel-item {
+        min-width: 260px;
+      }
+      
+      .logos {
+        gap: 0.5rem;
+      }
+      
+      .logo {
+        width: 50px;
+        height: 50px;
       }
     }
   </style>
@@ -264,7 +323,9 @@
 
 <div class="app-layout">
   <div class="player-section">
-    <div id="player"></div>
+    <div class="player-container">
+      <div id="player"></div>
+    </div>
   </div>
 
   <div class="channels-panel">
@@ -471,18 +532,26 @@
     activeItem = channelItems[index];
     currentChannelIndex = index;
     
-    // নির্বাচিত চ্যানেলটি ভিউতে আনা (স্ক্রল করা)
-    channelItems[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // ডেস্কটপে ভার্টিকাল স্ক্রল
+    if (window.innerWidth >= 992) {
+      channelItems[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      // মোবাইলে হরিজন্টাল স্ক্রল
+      const panel = document.querySelector('.channels-panel');
+      const item = channelItems[index];
+      const itemLeft = item.offsetLeft;
+      const itemWidth = item.offsetWidth;
+      const panelWidth = panel.offsetWidth;
+      
+      panel.scrollTo({
+        left: itemLeft - (panelWidth / 2) + (itemWidth / 2),
+        behavior: 'smooth'
+      });
+    }
   }
 
   // কিবোর্ড ইভেন্ট লিসেনার যোগ করা
   document.addEventListener('keydown', handleKeyboardControl);
-
-  // চ্যানেল প্যানেলে স্ক্রল করার জন্য (মাউস হুইল)
-  document.querySelector('.channels-panel').addEventListener('wheel', function(e) {
-    // স্ক্রল কাজ করবে, শুধু স্ক্রলবার দেখা যাবে না
-    this.scrollTop += e.deltaY;
-  });
 
   window.addEventListener('offline', () => {
     document.getElementById('no-connection').style.display = 'flex';
