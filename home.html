@@ -60,6 +60,14 @@
       display: flex;
       flex-direction: column;
       gap: var(--spacing);
+      /* স্ক্রলবার লুকানো কিন্তু স্ক্রল কাজ করবে */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    /* Chrome, Safari, Opera */
+    .channels-panel::-webkit-scrollbar {
+      display: none;
     }
 
     .channel-item {
@@ -187,39 +195,9 @@
       transform: translateY(-2px);
     }
 
+    /* রিমোট কন্ট্রোল UI লুকানো */
     .remote-control-info {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.8);
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 0.8rem;
-      border: 1px solid var(--border);
-      max-width: 300px;
-      backdrop-filter: blur(10px);
-      z-index: 100;
-    }
-
-    .remote-control-info h4 {
-      margin-bottom: 8px;
-      color: var(--accent);
-    }
-
-    .key-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .key {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-family: monospace;
-      font-size: 0.75rem;
+      display: none;
     }
 
     .selected-channel-indicator {
@@ -245,6 +223,27 @@
       100% { opacity: 0.7; }
     }
 
+    /* কীবোর্ড শর্টকাট টিপ্পনি - শুধু হোভার বা ফোকাসে দেখাবে */
+    .keyboard-hint {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(93, 95, 255, 0.9);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+
+    .keyboard-hint.show {
+      opacity: 1;
+    }
+
     @media (max-width: 992px) {
       .app-layout {
         flex-direction: column;
@@ -257,9 +256,6 @@
         border-left: none;
         border-top: 1px solid var(--border);
         padding: 1rem;
-      }
-      .remote-control-info {
-        display: none;
       }
     }
   </style>
@@ -325,12 +321,18 @@
   <button class="retry-btn" onclick="checkConnection()">আবার চেষ্টা করুন</button>
 </div>
 
-<div class="remote-control-info">
+<!-- রিমোট কন্ট্রোল UI লুকানো আছে -->
+<div class="remote-control-info" style="display: none;">
   <h4>রিমোট/কিবোর্ড কন্ট্রোল</h4>
   <div>চ্যানেল নির্বাচন: <span class="key">1</span>, <span class="key">2</span>, <span class="key">3</span></div>
   <div>চ্যানেল পরিবর্তন: <span class="key">↑</span>, <span class="key">↓</span>, <span class="key">←</span>, <span class="key">→</span></div>
   <div>সিলেক্ট করুণ: <span class="key">Enter</span></div>
   <div>প্লেয়ার কন্ট্রোল: <span class="key">Space</span> (প্লে/পজ), <span class="key">M</span> (মিউট)</div>
+</div>
+
+<!-- কীবোর্ড হিন্ট - শুধু প্রথম বার শর্টকাট ব্যবহার করলে দেখাবে -->
+<div class="keyboard-hint" id="keyboardHint">
+  কীবোর্ড শর্টকাট ব্যবহার করা হচ্ছে: সংখ্যা কি (1-3), তীর চিহ্ন (↑↓←→), Enter, Space, M
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
@@ -341,6 +343,8 @@
   let activeItem = document.querySelector('.channel-item.active');
   let currentChannelIndex = 0;
   const channelItems = document.querySelectorAll('.channel-item');
+  let keyboardHintShown = false;
+  let keyboardHintTimeout;
   
   // চ্যানেল ইউআরএল স্টোর করা
   const channelUrls = [
@@ -393,9 +397,27 @@
     }, 1400);
   }
 
+  // কিবোর্ড হিন্ট দেখানো
+  function showKeyboardHint() {
+    if (keyboardHintShown) return;
+    
+    const hint = document.getElementById('keyboardHint');
+    hint.classList.add('show');
+    
+    clearTimeout(keyboardHintTimeout);
+    keyboardHintTimeout = setTimeout(() => {
+      hint.classList.remove('show');
+    }, 3000);
+    
+    keyboardHintShown = true;
+  }
+
   // কিবোর্ড কন্ট্রোল ফাংশন
   function handleKeyboardControl(e) {
     const key = e.key.toLowerCase();
+    
+    // প্রথমবার কীবোর্ড শর্টকাট ব্যবহার করলে হিন্ট দেখাবে
+    showKeyboardHint();
     
     // রিমোট কন্ট্রোল: সংখ্যা কি দিয়ে সরাসরি চ্যানেল নির্বাচন
     if (key >= '1' && key <= '3') {
@@ -449,12 +471,18 @@
     activeItem = channelItems[index];
     currentChannelIndex = index;
     
-    // নির্বাচিত চ্যানেলটি ভিউতে আনা (স্ক্রোল করা)
+    // নির্বাচিত চ্যানেলটি ভিউতে আনা (স্ক্রল করা)
     channelItems[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   // কিবোর্ড ইভেন্ট লিসেনার যোগ করা
   document.addEventListener('keydown', handleKeyboardControl);
+
+  // চ্যানেল প্যানেলে স্ক্রল করার জন্য (মাউস হুইল)
+  document.querySelector('.channels-panel').addEventListener('wheel', function(e) {
+    // স্ক্রল কাজ করবে, শুধু স্ক্রলবার দেখা যাবে না
+    this.scrollTop += e.deltaY;
+  });
 
   window.addEventListener('offline', () => {
     document.getElementById('no-connection').style.display = 'flex';
