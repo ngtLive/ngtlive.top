@@ -31,56 +31,51 @@
       font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text-primary);
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+      padding: 20px;
       display: flex;
       flex-direction: column;
+      align-items: center;
     }
 
-    .app-layout {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    /* Main container */
+    .container {
       width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
+    /* Video player - fixed 560x315px */
     .player-section {
-      flex: 1;
+      width: 560px;
+      height: 315px;
       background: #000;
-      position: relative;
-      min-height: 0; /* Important for proper flex scaling */
-      width: 100%;
-    }
-
-    /* 16:9 Aspect Ratio Container */
-    .player-container {
-      position: relative;
-      width: 100%;
-      height: 0;
-      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-      background: #000;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
     #player {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
     }
 
+    /* Channels panel - directly below video player */
     .channels-panel {
+      width: 560px;
       background: var(--surface);
-      border-top: 1px solid var(--border);
-      overflow-y: auto;
+      border-radius: var(--radius);
       padding: var(--spacing);
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr;
       gap: var(--spacing);
-      height: 220px;
-      min-height: 220px;
-      /* স্ক্রলবার লুকানো কিন্তু স্ক্রল কাজ করবে */
+      max-height: calc(100vh - 315px - 60px);
+      overflow-y: auto;
       scrollbar-width: none; /* Firefox */
       -ms-overflow-style: none; /* IE and Edge */
+      border: 1px solid var(--border);
     }
 
     /* Chrome, Safari, Opera */
@@ -89,8 +84,6 @@
     }
 
     .channel-item {
-      min-width: 280px;
-      max-width: 320px;
       padding: 1rem;
       background: var(--surface);
       border-radius: var(--radius);
@@ -99,7 +92,6 @@
       transition: all 0.22s ease;
       position: relative;
       overflow: hidden;
-      flex-shrink: 0;
     }
 
     .channel-item:hover {
@@ -264,70 +256,36 @@
       opacity: 1;
     }
 
-    @media (min-width: 992px) {
-      /* ডেস্কটপে হরিজন্টাল থেকে ভার্টিকাল লে-আউট */
-      .app-layout {
-        flex-direction: row;
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        max-width: 100%;
       }
       
       .player-section {
-        height: 100%;
-        width: calc(100% - 340px);
-      }
-      
-      .player-container {
-        height: 100%;
-        padding-bottom: 0;
-        position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
+        height: auto;
+        aspect-ratio: 16/9;
       }
       
       .channels-panel {
-        width: 340px;
-        height: 100%;
-        border-top: none;
-        border-left: 1px solid var(--border);
-        flex-direction: column;
-        overflow-x: hidden;
-        overflow-y: auto;
-        padding: var(--spacing) 0;
-      }
-      
-      .channel-item {
-        min-width: auto;
-        max-width: none;
-        margin: 0 var(--spacing);
-        width: calc(100% - 2 * var(--spacing));
-      }
-    }
-
-    @media (max-width: 768px) {
-      .channel-item {
-        min-width: 260px;
-      }
-      
-      .logos {
-        gap: 0.5rem;
-      }
-      
-      .logo {
-        width: 50px;
-        height: 50px;
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
 
-<div class="app-layout">
+<div class="container">
+  <!-- Video Player - Fixed size 560x315px -->
   <div class="player-section">
-    <div class="player-container">
-      <div id="player"></div>
-    </div>
+    <div id="player"></div>
   </div>
 
+  <!-- Channels Panel - Directly below video player -->
   <div class="channels-panel">
     <div class="channel-item active" data-channel="1" onclick="loadStream('https://satoshi-cors.herokuapp.com/http://116.204.149.16/nagorik/tracks-v1a1/mono.m3u8', this)">
       <div class="selected-channel-indicator">Selected</div>
@@ -409,8 +367,8 @@
   
   // চ্যানেল ইউআরএল স্টোর করা
   const channelUrls = [
-    'https://satoshi-cors.herokuapp.com/http://116.204.149.16/nagorik/tracks-v1a1/mono.m3u8',
-    'https://bongoflixbd.top/tsports.m3u8?user=bongoflix&pass=eaminvai',
+    'http://116.204.149.16/nagorik/index.m3u8',
+    'https://padmaonline.duckdns.org:8088/T-SportHD/index.m3u8',
     'http://alvetv.com/moviebanglatv/8080/index.m3u8'
   ];
 
@@ -532,22 +490,8 @@
     activeItem = channelItems[index];
     currentChannelIndex = index;
     
-    // ডেস্কটপে ভার্টিকাল স্ক্রল
-    if (window.innerWidth >= 992) {
-      channelItems[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } else {
-      // মোবাইলে হরিজন্টাল স্ক্রল
-      const panel = document.querySelector('.channels-panel');
-      const item = channelItems[index];
-      const itemLeft = item.offsetLeft;
-      const itemWidth = item.offsetWidth;
-      const panelWidth = panel.offsetWidth;
-      
-      panel.scrollTo({
-        left: itemLeft - (panelWidth / 2) + (itemWidth / 2),
-        behavior: 'smooth'
-      });
-    }
+    // নির্বাচিত চ্যানেলটি ভিউতে আনা (স্ক্রল করা)
+    channelItems[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   // কিবোর্ড ইভেন্ট লিসেনার যোগ করা
@@ -561,7 +505,7 @@
     document.getElementById('no-connection').style.display = 'none';
   });
 
-  // প্রথম চ্যানেল অটো লোড করতে চাইলে এটা আনকমেন্ট করো
+  // প্রথম চ্যানেল অটো লোড
   window.addEventListener('load', () => {
     // প্রথম চ্যানেল লোড করা
     loadStream(channelUrls[0], channelItems[0]);
