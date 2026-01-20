@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NGT TELEVISION</title>
+<meta name="theme-color" content="#1e1e1e">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#8ab4f8;--bg-color:#000000;--surface-color:#1e1e1e;--input-bg:#303134;--text-main:#e8eaed;--text-sub:#9aa0a6;--border:#3c4043;--nav-height:70px}*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:'Roboto',sans-serif}body{background-color:var(--bg-color);color:var(--text-main);height:100dvh;width:100%;display:flex;flex-direction:column;overflow:hidden}#main-content{flex:1;position:relative;width:100%;overflow:hidden;background-color:var(--bg-color)}iframe{width:100%;height:100%;border:none;display:block}#profile-layer{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background-color:var(--bg-color);z-index:50;overflow-y:auto;flex-direction:column}.login-view{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:20px}.account-box{background-color:var(--surface-color);width:100%;max-width:380px;padding:40px 30px;border-radius:24px;text-align:center;border:1px solid var(--border)}.brand-title{font-size:26px;font-weight:500;margin-bottom:8px;color:#fff}.brand-title span{color:var(--primary);font-weight:700}.subtitle{color:var(--text-sub);font-size:14px;margin-bottom:35px}.avatar-zone{position:relative;width:96px;height:96px;margin:0 auto 30px;cursor:pointer}.avatar-preview{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid var(--primary);display:none;background:var(--input-bg)}.avatar-placeholder{width:100%;height:100%;border-radius:50%;background:var(--input-bg);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--text-sub);border:2px dashed var(--border);transition:.3s}.avatar-badge{position:absolute;bottom:0;right:0;background:var(--primary);color:#000;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:3px solid var(--surface-color)}.input-wrap{position:relative;margin-bottom:25px;text-align:left}.input-wrap input{width:100%;background:transparent;border:1px solid var(--border);border-radius:8px;padding:14px 16px;color:var(--text-main);font-size:16px;outline:none;transition:.2s}.input-wrap input:focus{border-color:var(--primary);border-width:2px;padding:13px 15px}.input-wrap label{position:absolute;left:14px;top:50%;transform:translateY(-50%);background:var(--surface-color);padding:0 6px;color:var(--text-sub);font-size:15px;transition:.2s;pointer-events:none}.input-wrap input:focus~label,.input-wrap input:not(:placeholder-shown)~label{top:0;font-size:12px;color:var(--primary)}.btn-action{width:100%;background-color:var(--primary);color:#202124;border:none;padding:14px;border-radius:24px;font-size:15px;font-weight:500;cursor:pointer;transition:opacity .2s;margin-top:10px;display:flex;justify-content:center;align-items:center}.btn-action:hover{opacity:.9}.dashboard-view{display:none;width:100%;padding:20px;animation:fadeIn .4s ease}.user-header{display:flex;align-items:center;background:var(--surface-color);padding:25px;border-radius:20px;border:1px solid var(--border);margin-bottom:20px;gap:20px}.user-img-lg{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);flex-shrink:0}.user-details{flex:1;display:flex;flex-direction:column;justify-content:center;overflow:hidden}.user-name{font-size:22px;font-weight:700;color:#fff;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.user-email{font-size:14px;color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status-badge{display:inline-block;margin-top:8px;font-size:12px;padding:4px 12px;border-radius:12px;background:rgba(76,175,80,0.2);color:#4caf50;width:fit-content}.status-badge.banned{background:rgba(244,67,54,0.2);color:#f44336}.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:10px}.dash-card{background:var(--surface-color);padding:20px;border-radius:16px;border:1px solid var(--border);text-align:center}.dash-card i{font-size:24px;color:var(--primary);margin-bottom:10px}.dash-card h4{font-size:14px;color:var(--text-sub)}.nav-container{height:var(--nav-height);background-color:var(--surface-color);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #333;flex-shrink:0;z-index:100;padding-bottom:env(safe-area-inset-bottom)}.nav-item{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;color:var(--text-sub);cursor:pointer;transition:all .3s ease;position:relative}.nav-item i{font-size:20px;margin-bottom:6px;padding:5px 20px;border-radius:20px;transition:.3s}.nav-item .nav-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;margin-bottom:4px;border:2px solid transparent;transition:.3s}.nav-item span{font-size:12px;font-weight:500}.nav-item.active{color:var(--primary)}.nav-item.active i{background:rgba(138,180,248,0.15)}.nav-item.active .nav-avatar{border-color:var(--primary);transform:scale(1.1)}.loading-spinner{width:20px;height:20px;border:2px solid #000;border-bottom-color:transparent;border-radius:50%;animation:spin 1s linear infinite;display:none}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.toast-msg{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#e8eaed;color:#202124;padding:12px 24px;border-radius:4px;font-size:14px;opacity:0;visibility:hidden;transition:.3s;z-index:2000;font-weight:500}.toast-msg.visible{opacity:1;visibility:visible}#lock-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;padding:30px;flex-direction:column;text-align:center}#lock-modal.banned-mode .lock-icon{color:#f44336;background:rgba(244,67,54,0.1)}#lock-modal.banned-mode .lock-btn{display:none}.lock-icon{font-size:50px;color:#ff4d4d;margin-bottom:20px;background:rgba(255,77,77,0.1);padding:30px;border-radius:50%}.lock-title{font-size:24px;font-weight:700;color:#fff;margin-bottom:10px}.lock-desc{font-size:15px;color:var(--text-sub);margin-bottom:30px;line-height:1.5}.lock-btn{background:var(--primary);color:#000;border:none;padding:12px 30px;border-radius:25px;font-size:16px;font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+
+<main id="main-content">
+<iframe id="web-frame" src="home.html" title="Web Content"></iframe>
+<div id="profile-layer">
+<div class="login-view" id="login-section">
+<div class="account-box">
+<h2 class="brand-title">NGT <span>ID</span></h2>
+<p class="subtitle">Access Live TV & Movies</p>
+<form id="acc-form">
+<div class="avatar-zone" onclick="document.getElementById('pic-input').click()">
+<div class="avatar-placeholder" id="no-img"><i class="fas fa-camera"></i></div>
+<img src="" class="avatar-preview" id="img-show" alt="Profile">
+<div class="avatar-badge"><i class="fas fa-plus"></i></div>
+<input type="file" id="pic-input" hidden accept="image/*" required>
+</div>
+<div class="input-wrap">
+<input type="text" id="fname" placeholder=" " required autocomplete="off">
+<label>Name</label>
+</div>
+<div class="input-wrap">
+<input type="email" id="femail" placeholder=" " required autocomplete="off">
+<label>Email</label>
+</div>
+<button type="submit" class="btn-action" id="done-btn">
+<span id="btn-lbl">Create Account</span>
+<div class="loading-spinner" id="spin-load"></div>
+</button>
+</form>
+</div>
+</div>
+<div class="dashboard-view" id="dashboard-section">
+<div class="user-header">
+<img src="" id="dash-img" class="user-img-lg" alt="User">
+<div class="user-details">
+<h3 id="dash-name" class="user-name">User</h3>
+<p id="dash-email" class="user-email">email</p>
+<div id="dash-status" class="status-badge">Active Member</div>
+</div>
+</div>
+<div class="dash-grid">
+<div class="dash-card"><i class="fas fa-star"></i><h4>Favorites</h4></div>
+<div class="dash-card"><i class="fas fa-history"></i><h4>History</h4></div>
+<div class="dash-card"><i class="fas fa-cog"></i><h4>Settings</h4></div>
+<div class="dash-card" onclick="logout()"><i class="fas fa-sign-out-alt"></i><h4>Logout</h4></div>
+</div>
+</div>
+</div>
+</main>
+
+<div id="lock-modal">
+<div class="lock-icon"><i class="fas fa-lock"></i></div>
+<h2 class="lock-title" id="lock-t">Access Restricted</h2>
+<p class="lock-desc" id="lock-d">Premium content is reserved for members only. Create NGT ID to continue.</p>
+<button class="lock-btn" onclick="goToAuth()">Create Account</button>
+</div>
+
+<nav class="nav-container">
+<button class="nav-item active" onclick="tab('home', this)"><i class="fas fa-house"></i><span>Home</span></button>
+<button class="nav-item" onclick="tab('tv', this)"><i class="fas fa-tv"></i><span>TV</span></button>
+<button class="nav-item" onclick="tab('movie', this)"><i class="fas fa-clapperboard"></i><span>Movie</span></button>
+<button class="nav-item" id="nav-profile-btn" onclick="tab('profile', this)"><i class="fas fa-user" id="nav-icon-i"></i><img src="" id="nav-icon-img" class="nav-avatar" style="display:none"><span>Profile</span></button>
+</nav>
+
+<div id="toast" class="toast-msg"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyD_HBGuQSh_GzqrHqHbgdaoBikLZsK3Qqs",
+authDomain: "new-all-f99f7.firebaseapp.com",
+databaseURL: "https://new-all-f99f7-default-rtdb.firebaseio.com",
+projectId: "new-all-f99f7",
+storageBucket: "new-all-f99f7.firebasestorage.app",
+messagingSenderId: "1069748173900",
+appId: "1:1069748173900:web:158d6336c0f4628133c8e9",
+measurementId: "G-V6DZ37WSBF"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const imgKey = "4f29b88d8207f6e762c2c852d5c895f8";
+let userStatus = 'active'; 
+
+function getUser(){const u=localStorage.getItem('ngt_user');return u?JSON.parse(u):null;}
+
+function initUI() {
+const u = getUser();
+const navImg = document.getElementById('nav-icon-img');
+const navI = document.getElementById('nav-icon-i');
+const loginView = document.getElementById('login-section');
+const dashView = document.getElementById('dashboard-section');
+
+if(u) {
+navI.style.display = 'none';
+navImg.src = u.pic;
+navImg.style.display = 'block';
+loginView.style.display = 'none';
+dashView.style.display = 'block';
+document.getElementById('dash-name').textContent = u.name;
+document.getElementById('dash-email').textContent = u.email;
+document.getElementById('dash-img').src = u.pic;
+monitorUser(u.key);
+} else {
+navImg.style.display = 'none';
+navI.style.display = 'block';
+loginView.style.display = 'flex';
+dashView.style.display = 'none';
+}
+}
+
+function monitorUser(key) {
+const sRef = ref(db, 'users/' + key + '/status');
+onValue(sRef, (snap) => {
+const s = snap.val();
+userStatus = s || 'active';
+const badge = document.getElementById('dash-status');
+if(userStatus === 'banned') {
+badge.textContent = 'Account Suspended';
+badge.classList.add('banned');
+const f = document.getElementById('web-frame');
+if(f.src.includes('tv.html') || f.src.includes('movie.html')) {
+showLock(true);
+}
+} else {
+badge.textContent = 'Active Member';
+badge.classList.remove('banned');
+document.getElementById('lock-modal').style.display = 'none';
+}
+});
+}
+
+function showLock(isBan) {
+const m = document.getElementById('lock-modal');
+const t = document.getElementById('lock-t');
+const d = document.getElementById('lock-d');
+m.style.display = 'flex';
+if(isBan) {
+m.classList.add('banned-mode');
+t.innerText = "Account Suspended";
+d.innerText = "Your account has been disabled by the administrator. Access denied.";
+} else {
+m.classList.remove('banned-mode');
+t.innerText = "Access Restricted";
+d.innerText = "Premium movies & TV channels are reserved for members only.";
+}
+}
+
+window.tab = function(t, e) {
+const u = getUser();
+if((t === 'tv' || t === 'movie')) {
+if(!u) { showLock(false); return; }
+if(userStatus === 'banned') { showLock(true); return; }
+}
+const f = document.getElementById('web-frame');
+const p = document.getElementById('profile-layer');
+document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+e.classList.add('active');
+
+if(t === 'profile') {
+f.style.display = 'none';
+p.style.display = 'flex';
+} else {
+p.style.display = 'none';
+f.style.display = 'block';
+if(!f.src.endsWith(`${t}.html`)) f.src = `${t}.html`;
+}
+}
+
+window.goToAuth = function() {
+document.getElementById('lock-modal').style.display = 'none';
+const btn = document.getElementById('nav-profile-btn');
+tab('profile', btn);
+}
+
+window.logout = function() {
+localStorage.removeItem('ngt_user');
+location.reload();
+}
+
+document.getElementById('pic-input').addEventListener('change', function(e) {
+const f = e.target.files[0];
+if(f) {
+const r = new FileReader();
+r.onload = function(ev) {
+document.getElementById('img-show').src = ev.target.result;
+document.getElementById('img-show').style.display = 'block';
+document.getElementById('no-img').style.display = 'none';
+}
+r.readAsDataURL(f);
+}
+});
+
+document.getElementById('acc-form').addEventListener('submit', async (e) => {
+e.preventDefault();
+const b = document.getElementById('done-btn');
+const l = document.getElementById('btn-lbl');
+const s = document.getElementById('spin-load');
+const n = document.getElementById('fname').value;
+const m = document.getElementById('femail').value;
+const pf = document.getElementById('pic-input').files[0];
+
+if(!pf) { notify("Select an image"); return; }
+b.disabled = true; l.style.display = 'none'; s.style.display = 'block';
+
+try {
+const fd = new FormData();
+fd.append('image', pf);
+const r = await fetch(`https://api.imgbb.com/1/upload?key=${imgKey}`, {method:'POST', body:fd});
+const d = await r.json();
+
+if(d.success) {
+const newRef = push(ref(db, 'users'));
+const userData = { name: n, email: m, pic: d.data.url, time: Date.now(), status: 'active', key: newRef.key };
+await set(newRef, userData);
+localStorage.setItem('ngt_user', JSON.stringify(userData));
+notify("Account Created!");
+initUI();
+} else { throw new Error(); }
+} catch(x) { notify("Failed. Try again."); }
+finally { b.disabled = false; l.style.display = 'block'; s.style.display = 'none'; }
+});
+
+function notify(txt) {
+const t = document.getElementById('toast');
+t.innerText = txt; t.classList.add('visible');
+setTimeout(() => t.classList.remove('visible'), 3000);
+}
+initUI();
+</script>
+</body>
+</html>

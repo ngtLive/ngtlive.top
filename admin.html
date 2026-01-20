@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGT Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#8ab4f8;--bg:#121212;--surface:#1e1e1e;--border:#333;--text:#fff;--danger:#ef5350;--success:#66bb6a}*{box-sizing:border-box;margin:0;padding:0;font-family:'Roboto',sans-serif}body{background:var(--bg);color:var(--text);padding:20px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.logo{font-size:24px;font-weight:700}.logo span{color:var(--primary)}
+.stats{display:flex;gap:20px}.stat-box{background:var(--surface);padding:15px 25px;border-radius:12px;text-align:center;border:1px solid var(--border)}.stat-num{display:block;font-size:20px;font-weight:700;color:var(--primary)}.stat-lbl{font-size:12px;color:#aaa}
+.user-list{display:grid;gap:15px}
+.user-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px}
+.u-info{display:flex;align-items:center;gap:15px;flex:1;min-width:200px}
+.u-img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--border)}
+.u-txt h3{font-size:16px;margin-bottom:4px}.u-txt p{font-size:13px;color:#aaa}
+.u-actions{display:flex;align-items:center;gap:15px}
+.badge{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;text-transform:uppercase}
+.badge.active{background:rgba(102,187,106,0.15);color:var(--success)}
+.badge.banned{background:rgba(239,83,80,0.15);color:var(--danger)}
+.toggle-switch{position:relative;width:50px;height:26px}
+.toggle-switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:var(--danger);border-radius:34px;transition:.4s}
+.slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background-color:white;border-radius:50%;transition:.4s}
+input:checked + .slider{background-color:var(--success)}
+input:checked + .slider:before{transform:translateX(24px)}
+@media (max-width:600px){.u-actions{width:100%;justify-content:space-between;border-top:1px solid #333;padding-top:15px}.header{flex-direction:column;align-items:flex-start;gap:15px}.stats{width:100%}.stat-box{flex:1}}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="logo">NGT <span>ADMIN</span></div>
+<div class="stats">
+<div class="stat-box"><span class="stat-num" id="total-users">0</span><span class="stat-lbl">Users</span></div>
+<div class="stat-box"><span class="stat-num" id="active-users">0</span><span class="stat-lbl">Active</span></div>
+</div>
+</div>
+<div class="user-list" id="list-zone"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyD_HBGuQSh_GzqrHqHbgdaoBikLZsK3Qqs",
+authDomain: "new-all-f99f7.firebaseapp.com",
+databaseURL: "https://new-all-f99f7-default-rtdb.firebaseio.com",
+projectId: "new-all-f99f7",
+storageBucket: "new-all-f99f7.firebasestorage.app",
+messagingSenderId: "1069748173900",
+appId: "1:1069748173900:web:158d6336c0f4628133c8e9",
+measurementId: "G-V6DZ37WSBF"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.toggleStatus = function(key, currentStatus) {
+const newStatus = currentStatus === 'active' ? 'banned' : 'active';
+update(ref(db, 'users/' + key), { status: newStatus });
+}
+
+onValue(ref(db, 'users'), (snap) => {
+const list = document.getElementById('list-zone');
+list.innerHTML = '';
+let total = 0; let active = 0;
+
+if(snap.exists()) {
+const data = snap.val();
+Object.entries(data).reverse().forEach(([key, u]) => {
+total++;
+const isBanned = u.status === 'banned';
+if(!isBanned) active++;
+
+const html = `
+<div class="user-card">
+<div class="u-info">
+<img src="${u.pic}" class="u-img" alt="u">
+<div class="u-txt">
+<h3>${u.name}</h3>
+<p>${u.email}</p>
+</div>
+</div>
+<div class="u-actions">
+<span class="badge ${isBanned ? 'banned' : 'active'}">${isBanned ? 'SUSPENDED' : 'ACTIVE'}</span>
+<label class="toggle-switch">
+<input type="checkbox" ${!isBanned ? 'checked' : ''} onchange="toggleStatus('${key}', '${u.status || 'active'}')">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+`;
+list.innerHTML += html;
+});
+}
+document.getElementById('total-users').innerText = total;
+document.getElementById('active-users').innerText = active;
+});
+</script>
+</body>
+</html>
