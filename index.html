@@ -52,39 +52,24 @@
 </main>
 
 <div id="lock-modal">
-  <div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
-  <h2 class="lock-title" id="lock-t">Member Access</h2>
-  
-  <p class="lock-desc" id="lock-d">
-    এই কন্টেন্ট শুধুমাত্র রেজিস্টার্ড মেম্বারদের জন্য।<br><br>
-    <strong>সবচেয়ে সহজ উপায়:</strong> WhatsApp-এ আমাদের অ্যাডমিনের সাথে কথা বলুন।<br>
-    অ্যাডমিন আপনাকে ইউজারনেম ও পাসওয়ার্ড দিয়ে দিবেন।
-  </p>
-  
-  <a href="https://wa.me/qr/L3CV4ZSUM2MPH1" target="_blank" class="lock-btn whatsapp-btn">
-    অ্যাডমিনের সাথে WhatsApp-এ কথা বলুন
-  </a>
-  
-  <p class="or-text">অথবা</p>
-  
-  <button class="lock-btn" onclick="showLoginWarning()">
-    সাইটে সরাসরি লগইন করুন
-  </button>
+<div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
+<h2 class="lock-title" id="lock-t">Member Access</h2>
+<p class="lock-desc" id="lock-d">
+This content is for registered members only.<br><br>
+<strong>Need Access?</strong> Contact Admin via WhatsApp.
+</p>
+<a href="https://wa.me/qr/L3CV4ZSUM2MPH1" target="_blank" class="lock-btn" style="margin-bottom:15px;display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none">
+<i class="fab fa-whatsapp" style="font-size:20px"></i> Chat with Admin
+</a>
+<p style="color:#666;font-size:12px;margin:10px 0">OR</p>
+<button class="lock-btn" style="background:#333;color:#fff" onclick="showLoginWarning()">Direct Login</button>
 </div>
 
 <script>
 function showLoginWarning() {
-  const message = "সরাসরি লগইন করতে আপনার ইউজারনেম এবং পাসওয়ার্ড লাগবে।\n\n" +
-                  "আপনার কাছে এখনো ইউজারনেম-পাসওয়ার্ড না থাকলে:\n" +
-                  "→ প্রথমে WhatsApp-এ অ্যাডমিনের সাথে কথা বলুন\n" +
-                  "→ অ্যাডমিন আপনাকে লগইন তথ্য দিয়ে দিবেন\n\n" +
-                  "এখনো WhatsApp-এ যেতে চান?";
-  
-  if (confirm(message)) {
-    // ইউজার "OK" ক্লিক করলে লগইন পেজে যাবে
-    goToAuth();
-  }
-  // "Cancel" ক্লিক করলে কিছু হবে না — ইউজার আবার ভাবতে পারবে
+if(confirm("Do you have a Username & Password?\n\nIf not, please contact Admin on WhatsApp.")) {
+goToAuth();
+}
 }
 </script>
 
@@ -99,7 +84,7 @@ function showLoginWarning() {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, get, query, orderByChild, equalTo, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, get, query, orderByChild, equalTo, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyD_HBGuQSh_GzqrHqHbgdaoBikLZsK3Qqs",
@@ -114,20 +99,24 @@ measurementId: "G-V6DZ37WSBF"
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 let currentUserKey = null;
 let userStatus = 'active';
 
 function getLocalUser(){const u=localStorage.getItem('ngt_auth_user');return u?JSON.parse(u):null;}
+function getLocalDevice(){return localStorage.getItem('ngt_device_id');}
 
 function initUI() {
 const u = getLocalUser();
 const loginView = document.getElementById('login-section');
 const dashView = document.getElementById('dashboard-section');
-
 if(u) {
 loginView.style.display = 'none';
 dashView.style.display = 'block';
 document.getElementById('dash-name').textContent = u.username;
+const avatarDiv = document.querySelector('.user-avatar');
+avatarDiv.innerHTML = `<img src="${DEFAULT_AVATAR}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+avatarDiv.style.border = "3px solid var(--primary)";
 currentUserKey = u.key;
 monitorUser(u.key);
 } else {
@@ -140,7 +129,7 @@ function monitorUser(key) {
 const sRef = ref(db, 'users/' + key);
 onValue(sRef, (snap) => {
 const data = snap.val();
-if(!data) { logout(); return; } 
+if(!data) { logout(); return; }
 userStatus = data.status || 'active';
 const badge = document.getElementById('dash-status');
 if(userStatus === 'banned') {
@@ -166,17 +155,17 @@ function showLock(isBan) {
 const m = document.getElementById('lock-modal');
 const t = document.getElementById('lock-t');
 const d = document.getElementById('lock-d');
-const b = document.querySelector('.lock-btn');
 m.style.display = 'flex';
 if(isBan) {
 m.classList.add('banned-mode');
 t.innerText = "Account Suspended";
-d.innerText = "Your account has been disabled by the administrator. Contact support.";
+d.innerText = "Your account has been disabled by the administrator.";
+document.querySelectorAll('.lock-btn').forEach(b=>b.style.display='none');
 } else {
 m.classList.remove('banned-mode');
 t.innerText = "Member Access";
-d.innerText = "This premium content is available for registered members only.";
-b.style.display = 'inline-block';
+d.innerHTML = `This content is for registered members only.<br><br><strong>Need Access?</strong> Contact Admin via WhatsApp.`;
+document.querySelectorAll('.lock-btn').forEach(b=>b.style.display='flex');
 }
 }
 
@@ -190,7 +179,6 @@ const f = document.getElementById('web-frame');
 const p = document.getElementById('profile-layer');
 document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
 e.classList.add('active');
-
 if(t === 'profile') {
 f.style.display = 'none';
 p.style.display = 'flex';
@@ -208,8 +196,18 @@ tab('profile', btn);
 }
 
 window.logout = function() {
+if(currentUserKey) {
+update(ref(db, 'users/' + currentUserKey), { deviceId: null })
+.then(() => {
 localStorage.removeItem('ngt_auth_user');
+localStorage.removeItem('ngt_device_id');
 location.reload();
+});
+} else {
+localStorage.removeItem('ngt_auth_user');
+localStorage.removeItem('ngt_device_id');
+location.reload();
+}
 }
 
 document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -219,7 +217,6 @@ const l = document.getElementById('btn-lbl');
 const s = document.getElementById('spin-load');
 const uid = document.getElementById('userid').value.trim();
 const pass = document.getElementById('userpass').value.trim();
-
 b.disabled = true; l.style.display = 'none'; s.style.display = 'block';
 
 try {
@@ -228,22 +225,47 @@ const snap = await get(usersRef);
 
 if(snap.exists()) {
 let found = false;
+let userKey = '';
+let userData = {};
+let dbDeviceId = null;
+
 snap.forEach((child) => {
 const val = child.val();
 if(val.password === pass) {
 found = true;
-const session = { key: child.key, username: val.username };
-localStorage.setItem('ngt_auth_user', JSON.stringify(session));
-notify("Login Successful");
-initUI();
+userKey = child.key;
+userData = val;
+dbDeviceId = val.deviceId || null;
 }
 });
-if(!found) notify("Invalid Password");
+
+if(found) {
+const localDeviceId = getLocalDevice();
+if(dbDeviceId && dbDeviceId !== localDeviceId) {
+notify("Login Failed: Active on another device!");
 } else {
-notify("User not found");
+let myDeviceId = localDeviceId;
+if(!dbDeviceId) {
+myDeviceId = Date.now().toString() + Math.random().toString(36).substring(2);
+await update(ref(db, 'users/' + userKey), { deviceId: myDeviceId });
+localStorage.setItem('ngt_device_id', myDeviceId);
 }
-} catch(x) { notify("Connection Error"); }
-finally { b.disabled = false; l.style.display = 'block'; s.style.display = 'none'; }
+const session = { key: userKey, username: userData.username };
+localStorage.setItem('ngt_auth_user', JSON.stringify(session));
+notify("Login Successful!");
+initUI();
+}
+} else {
+notify("Incorrect Password!");
+}
+} else {
+notify("User ID not found!");
+}
+} catch(x) {
+notify("Connection Error!");
+} finally {
+b.disabled = false; l.style.display = 'block'; s.style.display = 'none';
+}
 });
 
 function notify(txt) {
