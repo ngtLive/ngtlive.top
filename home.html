@@ -1,373 +1,223 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Premium Live Channels</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.css">
-  <style>
-    :root {
-      --spacing-sm: 0.6rem;
-      --spacing-md: 1rem;
-      --spacing-lg: 1.2rem;
-      --card-radius: 28px; /* আরেকটু বাড়ালাম → আরও গোল */
-      --blur: blur(14px);
-      --border-width: 3px; /* border মোটা করা যায় চাইলে */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sports Live TV</title>
+
+<!-- Clappr Player -->
+<script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #0b1a3a;
+    color: #fff;
+    min-height: 100vh;
+  }
+
+  /* Fixed Player - সবসময় উপরে থাকবে */
+  #player-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 220px;           /* মোবাইলে এই উচ্চতা */
+    background: #000;
+    z-index: 1000;
+  }
+
+  /* 16:9 aspect ratio for video player */
+  #player {
+    width: 100%;
+    height: 100%;
+  }
+
+  .video {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* এটাই মূল ফিক্স: Clappr-এর ভিতরের video ট্যাগকে full cover করা */
+  .clappr-video-container video {
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* চ্যানেল লিস্ট — প্লেয়ারের নিচ থেকে শুরু হবে */
+  .channels-container {
+    padding-top: 220px;
+    padding: 230px 15px 15px 15px;
+    min-height: 100vh;
+  }
+
+  .channels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .channel-card {
+    background: #132c63;
+    border-radius: 18px;
+    padding: 15px;
+    cursor: pointer;
+  }
+
+  .channel-card img {
+    width: 100%;
+    border-radius: 12px;
+    display: block;
+  }
+
+  .match-title {
+    text-align: center;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+
+  .teams {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+  }
+
+  .team {
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .vs {
+    font-weight: bold;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    background: #1e63ff;
+    color: white;
+  }
+
+  /* ডেস্কটপ/বড় স্ক্রিনে সাইড বাই সাইড + ফিক্সড প্লেয়ার */
+  @media (min-width: 992px) {
+    #player-wrapper {
+      width: 65%;
+      height: 100vh;          /* পুরো স্ক্রিন উচ্চতা */
     }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+
+    .channels-container {
+      margin-left: 65%;
+      padding-top: 0;
+      padding: 20px;
+      width: 35%;
     }
-    html, body {
-      height: 100%;
-      font-family: 'Inter', system-ui, sans-serif;
-      color: #e0e0ff;
-      overflow: hidden;
-      background: #000000;
+
+    .channels {
+      grid-template-columns: 1fr;
     }
-    .layout-wrapper {
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-      background: transparent;
+  }
+
+  /* ট্যাবলেট - একটু বড় প্লেয়ার */
+  @media (min-width: 768px) and (max-width: 991px) {
+    #player-wrapper {
+      height: 360px;
     }
-    #player-container {
-      background: #000;
+
+    .channels-container {
+      padding-top: 370px;
     }
-    /* Mobile & Desktop layout (আগের মতোই রাখা) */
-    @media (max-width: 991px) {
-      .layout-wrapper { flex-direction: column; }
-      #player-section { width: 100%; height: auto; }
-      #player-container { width: 100%; aspect-ratio: 16 / 9; }
-      .scorecards-container {
-        flex: 1;
-        overflow-y: auto;
-        padding: var(--spacing-lg) var(--spacing-md);
-        background: rgba(0, 0, 0, 0.6);
-      }
-      .scorecards {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-md);
-      }
-    }
-    @media (min-width: 992px) {
-      #player-section { width: 68%; height: 100vh; }
-      #player-container { height: 100%; }
-      .scorecards-container {
-        width: 32%;
-        height: 100vh;
-        overflow-y: auto;
-        background: rgba(0, 0, 0, 0.65);
-        backdrop-filter: var(--blur);
-        border-left: 1px solid rgba(255,255,255,0.08);
-        padding: 1.8rem 1.2rem;
-      }
-      .scorecards {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-md);
-      }
-    }
-    .scorecard {
-      position: relative;
-      background: rgba(20, 20, 20, 0.7);
-      backdrop-filter: var(--blur) saturate(120%);
-      border-radius: var(--card-radius);
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-      isolation: isolate; /* z-index layering-এর জন্য */
-    }
-    /* Animated RGB border using pseudo-element */
-    .scorecard::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: var(--card-radius);
-      padding: var(--border-width);
-      background: linear-gradient(90deg, #ff3366, #33ffcc, #ff9933, #9933ff, #ff3366);
-      background-size: 400% 400%;
-      -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-      animation: rgbFlow 10s ease infinite;
-      z-index: -1;
-    }
-    @keyframes rgbFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .scorecard:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-    }
-    .scorecard:hover::before {
-      animation-duration: 6s;
-    }
-    .scorecard.selected {
-      background: rgba(40, 40, 40, 0.8);
-      box-shadow: 0 0 40px rgba(255,255,255,0.2), inset 0 0 20px rgba(255,255,255,0.1);
-      transform: scale(1.015);
-    }
-    .scorecard.selected::before {
-      animation-duration: 8s;
-      background: linear-gradient(90deg, #ff3366, #33ffcc, #ff9933, #9933ff, #ff3366);
-    }
-    /* বাকি সব আগের মতোই */
-    .scorecard-inner {
-      padding: 1rem 0.8rem;
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-    .timer {
-      background: linear-gradient(90deg, #ff3366, #33ffcc, #ff9933, #9933ff, #ff3366);
-      background-size: 400% 400%;
-      color: white;
-      font-weight: 600;
-      padding: 0.35rem 0.9rem;
-      border-radius: 50px;
-      display: inline-block;
-      margin-bottom: 0.8rem;
-      font-size: 0.7rem;
-      letter-spacing: 0.4px;
-      box-shadow: 0 3px 12px rgba(255, 51, 102, 0.6);
-      animation: rgbFlow 10s ease infinite;
-    }
-    .teams {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.8rem;
-    }
-    .team {
-      flex: 1;
-      text-align: center;
-      height: 160px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .team-name {
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin-top: 0.5rem;
-      color: #e0e0ff;
-      letter-spacing: 0.3px;
-    }
-    .logo-container {
-      width: 100%;
-      height: 140px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .logo {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      transition: transform 0.4s ease;
-      filter: drop-shadow(0 0 12px rgba(255,255,255,0.5));
-      animation: pulse-glow 6s infinite ease-in-out;
-    }
-    @keyframes pulse-glow {
-      0%, 100% { filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)) brightness(1); transform: scale(1); }
-      50% { filter: drop-shadow(0 0 28px rgba(255,255,255,0.85)) brightness(1.18); transform: scale(1.08); }
-    }
-    .scorecard:hover .logo {
-      transform: scale(1.12);
-    }
-    .divider {
-      font-size: 2.8rem;
-      color: rgba(200,200,200,0.4);
-      font-weight: bold;
-      text-shadow: 0 0 10px rgba(255,255,255,0.3);
-    }
-    #offline-screen {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.98);
-      color: #fff;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      gap: 1.5rem;
-      backdrop-filter: blur(8px);
-    }
-    .retry-btn {
-      background: linear-gradient(90deg, #ff3366, #33ffcc, #ff9933, #9933ff, #ff3366);
-      background-size: 400% 400%;
-      color: white;
-      border: none;
-      padding: 0.9rem 2.8rem;
-      border-radius: 50px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
-      animation: rgbFlow 12s ease infinite;
-    }
-    .retry-btn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 15px 40px rgba(255, 51, 102, 0.8);
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-<!-- HTML structure আগের মতোই (কোনো পরিবর্তন নেই) -->
-<div class="layout-wrapper">
-  <div id="player-section">
-    <div id="player-container"></div>
-  </div>
-  <div class="scorecards-container">
-    <div class="scorecards" id="scorecards">
-      <div class="scorecard selected" tabindex="0" onclick="playVideo('https://satoshi-cors.herokuapp.com/http://116.204.149.16/nagorik/index.m3u8', this)">
-        <div class="scorecard-inner">
-          <div class="timer">BPL LIVE</div>
-          <div class="teams">
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://i.postimg.cc/8zQ0DYBH/20250720_201346.png" alt="Nagorik TV">
-              </div>
-              <div class="team-name">Nagorik TV</div>
-            </div>
-            <div class="divider">VS</div>
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGFic0ZWOr1sWDIctNOfTljhjD1Nt7StV3oA&s" alt="BPL">
-              </div>
-              <div class="team-name">BPL Live</div>
-            </div>
-          </div>
-        </div>
+
+<!-- Fixed Player -->
+<div id="player-wrapper">
+  <div id="player" class="video"></div>
+</div>
+
+<!-- Channels (স্ক্রল হবে) -->
+<div class="channels-container">
+  <div class="channels">
+
+    <!-- Channel 1 -->
+    <div class="channel-card" onclick="playChannel('https://padmaonline.duckdns.org:8088/T-SportHD/index.m3u8')">
+      <img src="https://i.ibb.co.com/BVs6hQv7/photo-2026-01-18-18-44-26.jpg" alt="Match">
+      <div class="match-title">T Sports TV – Live Sports</div>
+      <div class="teams">
+        <div class="team">⋆🏐⋆<br>Name</div>
+        <div class="vs">VS</div>
+        <div class="team">⋆🏐⋆<br>Name</div>
       </div>
-      <!-- বাকি দুইটা scorecard একই রাখা -->
-      <div class="scorecard" tabindex="0" onclick="playVideo('https://padmaonline.duckdns.org:8088/T-SportHD/index.m3u8', this)">
-        <div class="scorecard-inner">
-          <div class="timer">T-SPORTS LIVE</div>
-          <div class="teams">
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://i.postimg.cc/VL5yTtwr/20250707_141739.png" alt="T-Sports">
-              </div>
-              <div class="team-name">T-Sports</div>
-            </div>
-            <div class="divider">VS</div>
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuESkW9Qwp1iXoGf-v_DMK_4fY3OKSfuOMi90qePoiaR-uWl9BsCRclcYBgz_E8-MGgbx83YurJLpf7MOFThEGHoaqiSMsKHDT9tHT_QVU2OSdTJpWDOqe4NiWFemb0tu72LMRe-Jabj8/w0/T-sports-live-Titas-Tv.png" alt="Liverpool">
-              </div>
-              <div class="team-name">Liverpool</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="scorecard" tabindex="0" onclick="playVideo('http://alvetv.com/moviebanglatv/8080/index.m3u8', this)">
-        <div class="scorecard-inner">
-          <div class="timer">MOVIE BANGLA TV</div>
-          <div class="teams">
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://moviebangla.tv/wp-content/uploads/2024/06/moviebanglatv-logo-2.png" alt="Movie BD">
-              </div>
-              <div class="team-name">Movie BD</div>
-            </div>
-            <div class="divider">VS</div>
-            <div class="team">
-              <div class="logo-container">
-                <img class="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4a-PRfaDnHZSR0_eAU0yOEaSIxqPyMW3mvg&s" alt="BD Movies">
-              </div>
-              <div class="team-name">BD Movies</div>
-            </div>
-          </div>
-        </div>
+      <div class="buttons">
+        <div class="btn">▶ WATCH T-SPORTS LIVE</div>
       </div>
     </div>
+
+    <!-- Channel 2 -->
+    <div class="channel-card" onclick="playChannel('https://padmaonline.duckdns.org:8088/StarPlusHD/index.m3u8')">
+      <img src="https://i.ytimg.com/vi/wBYXhfUJYOk/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBmxPcczyWhLbipZ6R5GvBBMpUvpg" alt="Match">
+      <div class="match-title">Star Plus TV – Live Series </div>
+      <div class="teams">
+        <div class="team">⋆🏐⋆<br>Name</div>
+        <div class="vs">VS</div>
+        <div class="team">⋆🏐⋆<br>Name</div>
+      </div>
+      <div class="buttons">
+        <div class="btn">▶ WATCH  STAR PLUS LIVE</div>
+      </div>
+    </div>
+
+    <!-- Channel 3 -->
+    <div class="channel-card" onclick="playChannel('http://alvetv.com/moviebanglatv/8080/index.m3u8')">
+      <img src="https://i.ytimg.com/vi/Ue7FeWoO8ww/hq720.jpg?sqp=-oaymwEXCK4FEIIDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBho3tJB9SloIqEsJV2W8D0kWMXow" alt="Match">
+      <div class="match-title">Movie Bangla TV – Live Movie</div>
+      <div class="teams">
+        <div class="team">⋆🏐⋆<br>Name</div>
+        <div class="vs">VS</div>
+        <div class="team">⋆🏐⋆<br>Name</div>
+      </div>
+      <div class="buttons">
+        <div class="btn">▶ WATCH  BANGLA MOVIE LIVE</div>
+      </div>
+    </div>
+
   </div>
 </div>
-<div id="offline-screen">
-  <h2>No Internet Connection</h2>
-  <p>Please check your WiFi or Mobile Data</p>
-  <button class="retry-btn" onclick="retryInternet(this)">Retry</button>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/ewwink/clappr-quality-selector-plugin@latest/quality-selector.js"></script>
+
 <script>
-// JavaScript আগের মতোই (কোনো পরিবর্তন নেই)
-let currentPlayer = null;
-let currentCard = null;
-function playVideo(url, card) {
-  if (!navigator.onLine) {
-    document.getElementById("offline-screen").style.display = "flex";
-    return;
-  }
-  currentCard?.classList.remove('selected');
-  card.classList.add('selected');
-  currentCard = card;
-  const options = {
-    parentId: "#player-container",
-    source: url,
+  var player = new Clappr.Player({
+    source: 'https://spstr.abntv.live/hls/psstream.m3u8',
+    parentId: '#player',
     autoPlay: true,
     mute: false,
-    volume: 0.9,
-    height: "100%",
-    width: "100%",
-    hideMediaControl: true,
-    chromeless: false,
-    mediacontrol: {
-      seekbar: "#ffffff",
-      buttons: "#e0e0ff",
-      background: "rgba(30, 30, 30, 0.8)"
-    },
-    plugins: { core: [QualitySelector] },
-    qualitySelectorConfig: { title: 'Quality', defaultQuality: -1 }
-  };
-  if (!currentPlayer) currentPlayer = new Clappr.Player(options);
-  else currentPlayer.configure(options);
-}
-function retryInternet(btn) {
-  btn.disabled = true;
-  btn.textContent = "Checking...";
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = "Retry";
-    if (navigator.onLine) document.getElementById("offline-screen").style.display = "none";
-  }, 1800);
-}
-window.addEventListener("load", () => {
-  if (!navigator.onLine) document.getElementById("offline-screen").style.display = "flex";
-});
-window.addEventListener("offline", () => document.getElementById("offline-screen").style.display = "flex");
-window.addEventListener("online", () => document.getElementById("offline-screen").style.display = "none");
-const cards = document.querySelectorAll(".scorecard");
-let focusedIndex = 0;
-cards[0]?.focus();
-document.addEventListener("keydown", e => {
-  if (e.key === "ArrowDown" || e.key === "ArrowRight") {
-    focusedIndex = (focusedIndex + 1) % cards.length;
-    cards[focusedIndex].focus();
-  } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
-    focusedIndex = (focusedIndex - 1 + cards.length) % cards.length;
-    cards[focusedIndex].focus();
-  } else if (e.key === "Enter" || e.key === " ") {
-    cards[focusedIndex].click();
+    width: '100%',
+    height: '100%'
+  });
+
+  function playChannel(url) {
+    player.load(url);
+    player.play();
   }
-});
 </script>
+
 </body>
 </html>
