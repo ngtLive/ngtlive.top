@@ -52,11 +52,41 @@
 </main>
 
 <div id="lock-modal">
-<div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
-<h2 class="lock-title" id="lock-t">Member Access</h2>
-<p class="lock-desc" id="lock-d">This content is exclusive to registered members. Please login to continue.</p>
-<button class="lock-btn" onclick="goToAuth()">Login Now</button>
+  <div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
+  <h2 class="lock-title" id="lock-t">Member Access</h2>
+  
+  <p class="lock-desc" id="lock-d">
+    এই কন্টেন্ট শুধুমাত্র রেজিস্টার্ড মেম্বারদের জন্য।<br><br>
+    <strong>সবচেয়ে সহজ উপায়:</strong> WhatsApp-এ আমাদের অ্যাডমিনের সাথে কথা বলুন।<br>
+    অ্যাডমিন আপনাকে ইউজারনেম ও পাসওয়ার্ড দিয়ে দিবেন।
+  </p>
+  
+  <a href="https://wa.me/qr/L3CV4ZSUM2MPH1" target="_blank" class="lock-btn whatsapp-btn">
+    অ্যাডমিনের সাথে WhatsApp-এ কথা বলুন
+  </a>
+  
+  <p class="or-text">অথবা</p>
+  
+  <button class="lock-btn" onclick="showLoginWarning()">
+    সাইটে সরাসরি লগইন করুন
+  </button>
 </div>
+
+<script>
+function showLoginWarning() {
+  const message = "সরাসরি লগইন করতে আপনার ইউজারনেম এবং পাসওয়ার্ড লাগবে।\n\n" +
+                  "আপনার কাছে এখনো ইউজারনেম-পাসওয়ার্ড না থাকলে:\n" +
+                  "→ প্রথমে WhatsApp-এ অ্যাডমিনের সাথে কথা বলুন\n" +
+                  "→ অ্যাডমিন আপনাকে লগইন তথ্য দিয়ে দিবেন\n\n" +
+                  "এখনো WhatsApp-এ যেতে চান?";
+  
+  if (confirm(message)) {
+    // ইউজার "OK" ক্লিক করলে লগইন পেজে যাবে
+    goToAuth();
+  }
+  // "Cancel" ক্লিক করলে কিছু হবে না — ইউজার আবার ভাবতে পারবে
+}
+</script>
 
 <nav class="nav-container">
 <button class="nav-item active" onclick="tab('home', this)"><i class="fas fa-house"></i><span>Home</span></button>
