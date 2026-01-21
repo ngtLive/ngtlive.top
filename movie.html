@@ -4,12 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>Movie</title>
-
 <!-- Premium Fonts: Outfit & Oswald -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
-
 <style>
   :root {
     --primary: #ff0050; /* Vibrant Red */
@@ -18,21 +16,18 @@
     --text-main: #ffffff;
     --text-dim: #a0a0a0;
   }
-
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  
+ 
   body {
     background: var(--bg-dark);
     color: var(--text-main);
     font-family: 'Outfit', sans-serif;
     overflow-x: hidden;
   }
-
   /* --- 1. Custom Scrollbar --- */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: #111; }
   ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
   /* --- 2. Main Header --- */
   .app-header {
     position: fixed;
@@ -48,7 +43,7 @@
     border-bottom: 1px solid rgba(255,255,255,0.05);
     transition: transform 0.3s ease;
   }
-  
+ 
   .logo {
     font-family: 'Oswald', sans-serif;
     font-size: 1.8rem;
@@ -58,13 +53,12 @@
     letter-spacing: 1px;
     text-transform: uppercase;
   }
-
   .search-wrapper {
     position: relative;
     width: 40%;
     max-width: 350px;
   }
-  
+ 
   .search-wrapper input {
     width: 100%;
     background: #222;
@@ -78,13 +72,12 @@
   }
   .search-wrapper input:focus { border-color: var(--primary); background: #2a2a2a; }
   .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 0.9rem; }
-
   /* --- 3. Movie Grid Area --- */
   .container {
     padding: 100px 5% 50px;
     min-height: 100vh;
   }
-  
+ 
   .grid-title {
     font-size: 1.4rem;
     font-weight: 600;
@@ -94,13 +87,11 @@
     gap: 10px;
   }
   .grid-title::before { content:''; width:4px; height:24px; background:var(--primary); border-radius:2px; }
-
   .movie-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 20px;
   }
-
   /* --- 4. Premium Card Design --- */
   .card {
     position: relative;
@@ -111,19 +102,16 @@
     transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s;
     background: var(--card-bg);
   }
-
   .card:hover {
     transform: scale(1.05);
     box-shadow: 0 20px 30px rgba(0,0,0,0.5);
     z-index: 2;
   }
-
   .card img {
     width: 100%; height: 100%;
     object-fit: cover;
     transition: opacity 0.3s;
   }
-
   .card-overlay {
     position: absolute;
     inset: 0;
@@ -135,7 +123,7 @@
     justify-content: flex-end;
     padding: 15px;
   }
-  
+ 
   /* Mobile: Show minimal overlay always, Desktop: On hover */
   @media(max-width: 768px) {
     .card-overlay { opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.9) 20%, transparent 100%); }
@@ -144,7 +132,6 @@
   @media(min-width: 769px) {
     .card:hover .card-overlay { opacity: 1; }
   }
-
   .card-title {
     font-size: 0.95rem;
     font-weight: 600;
@@ -152,7 +139,7 @@
     color: #fff;
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
   }
-  
+ 
   .play-btn-card {
     position: absolute;
     top: 50%; left: 50%;
@@ -169,7 +156,6 @@
     transition: all 0.3s;
   }
   .card:hover .play-btn-card { opacity: 1; transform: translate(-50%, -50%); }
-
   /* --- 5. Skeleton Loader (New & Unique) --- */
   .skeleton {
     background: #1f1f1f;
@@ -192,7 +178,6 @@
     animation: shimmer 2s infinite;
   }
   @keyframes shimmer { 100% { transform: translateX(100%); } }
-
   /* --- 6. CUSTOM VIDEO PLAYER UI (The Challenge) --- */
   .player-overlay {
     position: fixed;
@@ -204,7 +189,6 @@
     opacity: 0;
     transition: opacity 0.4s ease;
   }
-
   .video-wrapper {
     position: relative;
     width: 100%;
@@ -214,13 +198,11 @@
     align-items: center;
     justify-content: center;
   }
-
   video {
     width: 100%;
     max-height: 100vh;
     aspect-ratio: 16/9;
   }
-
   /* Custom Controls UI */
   .player-ui {
     position: absolute;
@@ -229,7 +211,6 @@
     transition: opacity 0.3s ease;
   }
   .player-ui.hidden { opacity: 0; cursor: none; }
-
   /* Top Bar */
   .p-top {
     position: absolute;
@@ -252,7 +233,6 @@
     display: grid; place-items: center;
   }
   .p-title { font-size: 1.1rem; font-weight: 600; text-shadow: 0 2px 4px #000; }
-
   /* Bottom Controls */
   .p-controls {
     position: absolute;
@@ -264,7 +244,6 @@
     flex-direction: column;
     gap: 10px;
   }
-
   /* Progress Bar */
   .progress-container {
     width: 100%;
@@ -291,7 +270,6 @@
     transition: transform 0.2s;
   }
   .progress-container:hover .progress-fill::after { transform: scale(1); }
-
   /* Buttons Row */
   .btn-row {
     display: flex;
@@ -306,49 +284,44 @@
   }
   .p-btn:hover { opacity: 1; transform: scale(1.1); color: var(--primary); }
   .time-display { font-size: 0.85rem; color: #ddd; font-variant-numeric: tabular-nums; }
-
   /* Mobile Grid Adjustment */
   @media(max-width: 600px) {
     .movie-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .card { border-radius: 8px; }
     .grid-title { font-size: 1.2rem; }
   }
-  
+ 
   /* Related Section under player (Visible when scrolling up) */
   .related-view {
     padding: 20px;
     background: #0f0f0f;
     display: none;
   }
-
 </style>
 </head>
 <body>
-
 <!-- MAIN APP UI -->
 <header class="app-header" id="mainHeader">
-  <div class="logo">NGT<span style="color:#fff; font-weight:300;">PLAY</span></div>
+  <div class="logo">NGT<span style="color:#fff; font-weight:300;"> MOVIE HD & 4K</span></div>
   <div class="search-wrapper">
     <span class="search-icon">🔍</span>
     <input type="text" id="searchInput" placeholder="Search...">
   </div>
 </header>
-
 <div class="container" id="homeView">
-  <div class="grid-title">Trending Movies</div>
+  
   <div class="movie-grid" id="movieGrid">
     <!-- Skeleton Loaders injected by JS -->
   </div>
 </div>
-
 <!-- CUSTOM PLAYER UI -->
 <div class="player-overlay" id="playerOverlay">
   <div class="video-wrapper" id="videoWrapper">
     <video id="myVideo" playsinline></video>
-    
+   
     <!-- Custom UI Layer -->
     <div class="player-ui" id="playerUI">
-      
+     
       <!-- Top Header -->
       <div class="p-top">
         <button class="p-back" onclick="closePlayer()">
@@ -356,15 +329,12 @@
         </button>
         <div class="p-title" id="pTitle">Movie Name</div>
       </div>
-
-      <!-- Center Play/Pause Animation (Optional click trigger) -->
-      
       <!-- Bottom Controls -->
       <div class="p-controls">
         <div class="progress-container" id="progressBar">
           <div class="progress-fill" id="progressFill"></div>
         </div>
-        
+       
         <div class="btn-row">
           <div class="left-btns">
             <button class="p-btn" id="playPauseBtn">▶</button>
@@ -373,10 +343,9 @@
           <button class="p-btn" id="fsBtn">⛶</button>
         </div>
       </div>
-
     </div>
   </div>
-  
+ 
   <!-- Play Next Section -->
   <div class="related-view" id="relatedSection">
     <div class="grid-title" style="font-size:1.1rem">Play Next</div>
@@ -389,6 +358,9 @@
 const M3U_URL = "https://raw.githubusercontent.com/nirob1520/NGTmovieBd/refs/heads/main/NGTmovie.m3u";
 let allMovies = [];
 let uiTimer;
+let currentIndex = 0;
+const BATCH_SIZE = 100;
+const BATCH_INTERVAL = 10000; // 10 seconds
 
 // --- DOM ELEMENTS ---
 const homeView = document.getElementById('homeView');
@@ -397,7 +369,6 @@ const playerOverlay = document.getElementById('playerOverlay');
 const relatedSection = document.getElementById('relatedSection');
 const relatedGrid = document.getElementById('relatedGrid');
 const mainHeader = document.getElementById('mainHeader');
-
 // Player Elements
 const video = document.getElementById('myVideo');
 const playerUI = document.getElementById('playerUI');
@@ -429,37 +400,72 @@ async function fetchPlaylist() {
 function parseM3U(data) {
   const lines = data.split('\n');
   allMovies = [];
-
-  for(let i=0; i<lines.length; i++) {
+  for(let i = 0; i < lines.length; i++) {
     if(lines[i].startsWith('#EXTINF')) {
       const info = lines[i];
       const url = lines[i+1]?.trim();
       if(!url || !url.startsWith('http')) continue;
-
       const nameMatch = info.match(/,(.+)/);
       const logoMatch = info.match(/tvg-logo="([^"]+)"/);
-
       let name = nameMatch ? nameMatch[1].trim() : "Unknown";
       let logo = logoMatch ? logoMatch[1].trim() : "";
-      
+     
       // Fix TMDB Images
       if(logo.includes('image.tmdb.org')) logo = logo.replace('/original/', '/w500/');
-      
+     
       allMovies.push({ name, logo, url });
     }
   }
-  
-  // Render Real Data
-  renderGrid(allMovies, movieGrid);
+
+  // Start batch rendering
+  currentIndex = 0;
+  movieGrid.innerHTML = ''; // Clear skeletons
+  loadNextBatch();
+  startBatchLoader();
 }
 
-function renderGrid(list, container, isRelated=false) {
+function loadNextBatch() {
+  if (currentIndex >= allMovies.length) return;
+
+  const end = Math.min(currentIndex + BATCH_SIZE, allMovies.length);
+  const batch = allMovies.slice(currentIndex, end);
+
+  batch.forEach(movie => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const fallback = `https://via.placeholder.com/300x450/111/333?text=${movie.name.charAt(0)}`;
+   
+    card.innerHTML = `
+      <img src="${movie.logo || fallback}" onerror="this.src='${fallback}'" loading="lazy">
+      <div class="card-overlay">
+        <div class="play-btn-card">▶</div>
+        <div class="card-title">${movie.name}</div>
+      </div>
+    `;
+    card.onclick = () => openPlayer(movie);
+    movieGrid.appendChild(card);
+  });
+
+  currentIndex = end;
+}
+
+function startBatchLoader() {
+  const intervalId = setInterval(() => {
+    if (currentIndex >= allMovies.length) {
+      clearInterval(intervalId);
+      return;
+    }
+    loadNextBatch();
+  }, BATCH_INTERVAL);
+}
+
+function renderGrid(list, container, isRelated = false) {
   container.innerHTML = '';
   list.forEach(movie => {
     const card = document.createElement('div');
     card.className = 'card';
     const fallback = `https://via.placeholder.com/300x450/111/333?text=${movie.name.charAt(0)}`;
-    
+   
     card.innerHTML = `
       <img src="${movie.logo || fallback}" onerror="this.src='${fallback}'" loading="lazy">
       <div class="card-overlay">
@@ -473,28 +479,26 @@ function renderGrid(list, container, isRelated=false) {
 }
 
 // --- 2. PLAYER LOGIC (CUSTOM & ROBUST) ---
-
 function openPlayer(movie) {
   // 1. Setup UI
   document.getElementById('pTitle').textContent = movie.name;
   video.src = movie.url;
-  
+ 
   // 2. Animations & View Switch
   mainHeader.style.transform = "translateY(-100%)"; // Hide App Header
   playerOverlay.style.display = 'flex';
   setTimeout(() => playerOverlay.style.opacity = '1', 10);
-  
+ 
   // 3. Related Movies
   const suggestions = allMovies.filter(m => m !== movie).sort(()=> 0.5 - Math.random()).slice(0, 6);
   renderGrid(suggestions, relatedGrid, true);
   relatedSection.style.display = 'block';
-
   // 4. Play
   video.play().then(() => updatePlayIcon(true)).catch(e => console.log(e));
-  
+ 
   // 5. History State (Fix Mobile Back Button)
   window.history.pushState({modal: true}, null, "#watch");
-  
+ 
   resetUiTimer();
 }
 
@@ -503,14 +507,13 @@ function closePlayer() {
   video.pause();
   video.src = "";
   updatePlayIcon(false);
-  
+ 
   // Animation
   playerOverlay.style.opacity = '0';
   setTimeout(() => {
     playerOverlay.style.display = 'none';
     mainHeader.style.transform = "translateY(0)";
   }, 300);
-
   // History Clean
   if(window.location.hash === "#watch") {
     window.history.back();
@@ -518,7 +521,6 @@ function closePlayer() {
 }
 
 // --- 3. CUSTOM CONTROLS FUNCTIONALITY ---
-
 // Play/Pause
 function togglePlay() {
   if(video.paused) {
@@ -529,11 +531,9 @@ function togglePlay() {
     updatePlayIcon(false);
   }
 }
-
 function updatePlayIcon(isPlaying) {
   playPauseBtn.textContent = isPlaying ? "⏸" : "▶";
 }
-
 // Time Update & Progress
 video.addEventListener('timeupdate', () => {
   if(!video.duration) return;
@@ -542,14 +542,12 @@ video.addEventListener('timeupdate', () => {
   currTimeEl.textContent = formatTime(video.currentTime);
   durTimeEl.textContent = formatTime(video.duration);
 });
-
 // Seek
 progressBar.addEventListener('click', (e) => {
   const rect = progressBar.getBoundingClientRect();
   const pos = (e.clientX - rect.left) / rect.width;
   video.currentTime = pos * video.duration;
 });
-
 // Fullscreen
 fsBtn.addEventListener('click', () => {
   if(!document.fullscreenElement) {
@@ -558,14 +556,12 @@ fsBtn.addEventListener('click', () => {
     document.exitFullscreen();
   }
 });
-
 // Format Time (mm:ss)
 function formatTime(s) {
   const m = Math.floor(s / 60);
   const sec = Math.floor(s % 60);
   return `${m}:${sec < 10 ? '0'+sec : sec}`;
 }
-
 // UI Visibility (Hide controls on idle)
 function resetUiTimer() {
   playerUI.classList.remove('hidden');
@@ -575,7 +571,6 @@ function resetUiTimer() {
     if(!video.paused) playerUI.classList.add('hidden');
   }, 3500);
 }
-
 // Events for UI Visibility
 videoWrapper.addEventListener('mousemove', resetUiTimer);
 videoWrapper.addEventListener('click', (e) => {
@@ -588,14 +583,11 @@ videoWrapper.addEventListener('click', (e) => {
   togglePlay();
   resetUiTimer();
 });
-
 playPauseBtn.addEventListener('click', (e) => {
   e.stopPropagation(); // Prevent bubbling
   togglePlay();
 });
-
 // --- 4. GLOBAL EVENTS ---
-
 // Mobile Back Button Handler
 window.addEventListener('popstate', () => {
   // If user presses Back button and player is open
@@ -610,17 +602,16 @@ window.addEventListener('popstate', () => {
     }, 300);
   }
 });
-
 // Search
 document.getElementById('searchInput').addEventListener('input', (e) => {
   const term = e.target.value.toLowerCase();
   const filtered = allMovies.filter(m => m.name.toLowerCase().includes(term));
+  movieGrid.innerHTML = '';
+  currentIndex = 0;
   renderGrid(filtered, movieGrid);
 });
-
 // Init App
 init();
-
 </script>
 </body>
 </html>
