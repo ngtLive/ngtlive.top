@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NGT TV - Login</title>
+<meta name="theme-color" content="#1e1e1e">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Updated FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#8ab4f8;--bg-color:#000000;--surface-color:#1e1e1e;--input-bg:#303134;--text-main:#e8eaed;--text-sub:#9aa0a6;--border:#3c4043;--nav-height:70px}*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:'Roboto',sans-serif}body{background-color:var(--bg-color);color:var(--text-main);height:100dvh;width:100%;display:flex;flex-direction:column;overflow:hidden}#main-content{flex:1;position:relative;width:100%;overflow:hidden;background-color:var(--bg-color)}iframe{width:100%;height:100%;border:none;display:block}#profile-layer{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background-color:var(--bg-color);z-index:50;overflow-y:auto;flex-direction:column}.login-view{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:20px}.account-box{background-color:var(--surface-color);width:100%;max-width:380px;padding:40px 30px;border-radius:24px;text-align:center;border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,0.5)}.brand-title{font-size:28px;font-weight:700;margin-bottom:8px;color:#fff;letter-spacing:1px}.brand-title span{color:var(--primary)}.subtitle{color:var(--text-sub);font-size:14px;margin-bottom:40px}.input-wrap{position:relative;margin-bottom:25px;text-align:left}.input-wrap i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-sub);font-size:18px}.input-wrap input{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:12px;padding:16px 16px 16px 50px;color:var(--text-main);font-size:16px;outline:none;transition:.3s}.input-wrap input:focus{border-color:var(--primary);background:var(--surface-color)}.btn-action{width:100%;background:linear-gradient(135deg,var(--primary),#5c97f7);color:#000;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:transform .2s;margin-top:20px;box-shadow:0 4px 15px rgba(138,180,248,0.3)}.btn-action:active{transform:scale(0.98)}.dashboard-view{display:none;width:100%;padding:20px;animation:fadeIn .4s ease}.user-header{display:flex;flex-direction:column;align-items:center;background:var(--surface-color);padding:30px;border-radius:24px;border:1px solid var(--border);margin-bottom:20px;text-align:center}.user-avatar{width:100px;height:100px;background:var(--input-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--primary);margin-bottom:15px;border:3px solid var(--border)}.user-name{font-size:24px;font-weight:700;color:#fff;margin-bottom:5px}.status-badge{display:inline-block;margin-top:5px;font-size:13px;padding:5px 15px;border-radius:20px;background:rgba(76,175,80,0.2);color:#4caf50;font-weight:500}.status-badge.banned{background:rgba(244,67,54,0.2);color:#f44336}.dash-grid{display:grid;grid-template-columns:1fr;gap:15px;margin-top:10px}.dash-card{background:var(--surface-color);padding:20px;border-radius:16px;border:1px solid var(--border);display:flex;align-items:center;gap:15px;cursor:pointer;transition:.2s}.dash-card:active{background:var(--input-bg)}.dash-card i{font-size:20px;color:var(--primary);width:40px;height:40px;background:rgba(138,180,248,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center}.dash-card h4{font-size:16px;color:var(--text-main);font-weight:500}.nav-container{height:var(--nav-height);background-color:var(--surface-color);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #333;flex-shrink:0;z-index:100;padding-bottom:env(safe-area-inset-bottom)}.nav-item{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;color:var(--text-sub);cursor:pointer;transition:all .3s ease}.nav-item i{font-size:20px;margin-bottom:6px;padding:5px 20px;border-radius:20px;transition:.3s}.nav-item span{font-size:12px;font-weight:500}.nav-item.active{color:var(--primary)}.nav-item.active i{background:rgba(138,180,248,0.15)}.loading-spinner{width:20px;height:20px;border:2px solid #000;border-bottom-color:transparent;border-radius:50%;animation:spin 1s linear infinite;display:none;margin:0 auto}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.toast-msg{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#e8eaed;color:#202124;padding:12px 24px;border-radius:50px;font-size:14px;opacity:0;visibility:hidden;transition:.3s;z-index:2000;font-weight:600;box-shadow:0 5px 15px rgba(0,0,0,0.3)}.toast-msg.visible{opacity:1;visibility:visible}#lock-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;padding:30px;flex-direction:column;text-align:center}#lock-modal.banned-mode .lock-icon{color:#f44336;background:rgba(244,67,54,0.1)}#lock-modal.banned-mode .lock-btn{display:none}.lock-icon{font-size:60px;color:var(--primary);margin-bottom:25px;background:rgba(138,180,248,0.1);width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center}.lock-title{font-size:26px;font-weight:700;color:#fff;margin-bottom:10px}.lock-desc{font-size:16px;color:var(--text-sub);margin-bottom:30px;line-height:1.6;max-width:300px}.lock-btn{background:var(--primary);color:#000;border:none;padding:14px 40px;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer}
+</style>
+</head>
+<body>
+
+<main id="main-content">
+<!-- Default loads home.html -->
+<iframe id="web-frame" src="home.html" title="Web Content"></iframe>
+
+<!-- Profile / Login Layer -->
+<div id="profile-layer">
+<div class="login-view" id="login-section">
+<div class="account-box">
+<h2 class="brand-title">NGT <span>LOGIN</span></h2>
+<p class="subtitle">Enter your credentials to continue</p>
+<form id="login-form">
+<div class="input-wrap">
+<i class="fas fa-user"></i>
+<input type="text" id="userid" placeholder="User ID" required autocomplete="off">
+</div>
+<div class="input-wrap">
+<i class="fas fa-lock"></i>
+<input type="password" id="userpass" placeholder="Password" required autocomplete="off">
+</div>
+<button type="submit" class="btn-action" id="login-btn">
+<span id="btn-lbl">Secure Login</span>
+<div class="loading-spinner" id="spin-load"></div>
+</button>
+</form>
+</div>
+</div>
+<div class="dashboard-view" id="dashboard-section">
+<div class="user-header">
+<div class="user-avatar"><i class="fas fa-user"></i></div>
+<h3 id="dash-name" class="user-name">User</h3>
+<div id="dash-status" class="status-badge">Premium Member</div>
+</div>
+<div class="dash-grid">
+<div class="dash-card"><i class="fas fa-tv"></i><h4>Live Channels</h4></div>
+<div class="dash-card"><i class="fas fa-film"></i><h4>Movies</h4></div>
+<div class="dash-card"><i class="fas fa-circle-exclamation"></i><h4>18+ Content</h4></div>
+<div class="dash-card" onclick="logout()"><i class="fas fa-sign-out-alt"></i><h4>Logout Account</h4></div>
+</div>
+</div>
+</div>
+</main>
+
+<!-- Lock Modal for Non-Logged Users / Banned Users -->
+<div id="lock-modal">
+<div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
+<h2 class="lock-title" id="lock-t">Member Access</h2>
+<p class="lock-desc" id="lock-d">
+This content is for registered members only.<br><br>
+<strong>Need Access?</strong> Contact Admin via WhatsApp.
+</p>
+<a href="https://wa.me/qr/L3CV4ZSUM2MPH1" target="_blank" class="lock-btn" style="margin-bottom:15px;display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none">
+<i class="fab fa-whatsapp" style="font-size:20px"></i> Chat with Admin
+</a>
+<p style="color:#666;font-size:12px;margin:10px 0">OR</p>
+<button class="lock-btn" style="background:#333;color:#fff" onclick="showLoginWarning()">Direct Login</button>
+</div>
+
+<script>
+function showLoginWarning() {
+if(confirm("Do you have a Username & Password?\n\nIf not, please contact Admin on WhatsApp.")) {
+goToAuth();
+}
+}
+</script>
+
+<!-- UPDATED NAVIGATION BAR -->
+<nav class="nav-container">
+<button class="nav-item active" onclick="tab('home', this)"><i class="fas fa-house"></i><span>Home</span></button>
+<button class="nav-item" onclick="tab('tv', this)"><i class="fas fa-tv"></i><span>TV</span></button>
+<button class="nav-item" onclick="tab('movie', this)"><i class="fas fa-clapperboard"></i><span>Movie</span></button>
+<!-- 18+ Added Here -->
+<button class="nav-item" onclick="tab('adult', this)"><i class="fas fa-circle-exclamation"></i><span>18+</span></button>
+<button class="nav-item" id="nav-profile-btn" onclick="tab('profile', this)"><i class="fas fa-user"></i><span>Profile</span></button>
+</nav>
+
+<div id="toast" class="toast-msg"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get, query, orderByChild, equalTo, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyD_HBGuQSh_GzqrHqHbgdaoBikLZsK3Qqs",
+authDomain: "new-all-f99f7.firebaseapp.com",
+databaseURL: "https://new-all-f99f7-default-rtdb.firebaseio.com",
+projectId: "new-all-f99f7",
+storageBucket: "new-all-f99f7.firebasestorage.app",
+messagingSenderId: "1069748173900",
+appId: "1:1069748173900:web:158d6336c0f4628133c8e9",
+measurementId: "G-V6DZ37WSBF"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+let currentUserKey = null;
+let userStatus = 'active';
+
+function getLocalUser(){const u=localStorage.getItem('ngt_auth_user');return u?JSON.parse(u):null;}
+function getLocalDevice(){return localStorage.getItem('ngt_device_id');}
+
+function initUI() {
+const u = getLocalUser();
+const loginView = document.getElementById('login-section');
+const dashView = document.getElementById('dashboard-section');
+if(u) {
+loginView.style.display = 'none';
+dashView.style.display = 'block';
+document.getElementById('dash-name').textContent = u.username;
+const avatarDiv = document.querySelector('.user-avatar');
+avatarDiv.innerHTML = `<img src="${DEFAULT_AVATAR}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+avatarDiv.style.border = "3px solid var(--primary)";
+currentUserKey = u.key;
+monitorUser(u.key);
+} else {
+loginView.style.display = 'flex';
+dashView.style.display = 'none';
+}
+}
+
+function monitorUser(key) {
+const sRef = ref(db, 'users/' + key);
+onValue(sRef, (snap) => {
+const data = snap.val();
+if(!data) { logout(); return; }
+userStatus = data.status || 'active';
+const badge = document.getElementById('dash-status');
+if(userStatus === 'banned') {
+badge.textContent = 'Account Suspended';
+badge.classList.add('banned');
+checkAccess();
+} else {
+badge.textContent = 'Premium Member';
+badge.classList.remove('banned');
+document.getElementById('lock-modal').style.display = 'none';
+}
+});
+}
+
+function checkAccess() {
+const f = document.getElementById('web-frame');
+const src = f.src;
+// Check if user is on restricted pages and banned
+if(src.includes('tv.html') || src.includes('movie.html') || src.includes('18+ADULT.html')) {
+if(userStatus === 'banned') showLock(true);
+}
+}
+
+function showLock(isBan) {
+const m = document.getElementById('lock-modal');
+const t = document.getElementById('lock-t');
+const d = document.getElementById('lock-d');
+m.style.display = 'flex';
+if(isBan) {
+m.classList.add('banned-mode');
+t.innerText = "Account Suspended";
+d.innerText = "Your account has been disabled by the administrator.";
+document.querySelectorAll('.lock-btn').forEach(b=>b.style.display='none');
+} else {
+m.classList.remove('banned-mode');
+t.innerText = "Member Access";
+d.innerHTML = `This content is for registered members only.<br><br><strong>Need Access?</strong> Contact Admin via WhatsApp.`;
+document.querySelectorAll('.lock-btn').forEach(b=>b.style.display='flex');
+}
+}
+
+// Updated Tab Function to handle 18+ and Security
+window.tab = function(t, e) {
+const u = getLocalUser();
+
+// Security Check for Protected Tabs
+if(t === 'tv' || t === 'movie' || t === 'adult') {
+if(!u) { showLock(false); return; }
+if(userStatus === 'banned') { showLock(true); return; }
+}
+
+const f = document.getElementById('web-frame');
+const p = document.getElementById('profile-layer');
+document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+e.classList.add('active');
+
+if(t === 'profile') {
+f.style.display = 'none';
+p.style.display = 'flex';
+} else {
+p.style.display = 'none';
+f.style.display = 'block';
+
+// Logic to determine file name
+let targetFile = t + ".html";
+if(t === 'adult') {
+targetFile = "18+ADULT.html";
+}
+
+if(!f.src.endsWith(targetFile)) {
+f.src = targetFile;
+}
+}
+}
+
+window.goToAuth = function() {
+document.getElementById('lock-modal').style.display = 'none';
+const btn = document.getElementById('nav-profile-btn');
+tab('profile', btn);
+}
+
+window.logout = function() {
+if(currentUserKey) {
+update(ref(db, 'users/' + currentUserKey), { deviceId: null })
+.then(() => {
+localStorage.removeItem('ngt_auth_user');
+localStorage.removeItem('ngt_device_id');
+location.reload();
+});
+} else {
+localStorage.removeItem('ngt_auth_user');
+localStorage.removeItem('ngt_device_id');
+location.reload();
+}
+}
+
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+e.preventDefault();
+const b = document.getElementById('login-btn');
+const l = document.getElementById('btn-lbl');
+const s = document.getElementById('spin-load');
+const uid = document.getElementById('userid').value.trim();
+const pass = document.getElementById('userpass').value.trim();
+b.disabled = true; l.style.display = 'none'; s.style.display = 'block';
+
+try {
+const usersRef = query(ref(db, 'users'), orderByChild('username'), equalTo(uid));
+const snap = await get(usersRef);
+
+if(snap.exists()) {
+let found = false;
+let userKey = '';
+let userData = {};
+let dbDeviceId = null;
+
+snap.forEach((child) => {
+const val = child.val();
+if(val.password === pass) {
+found = true;
+userKey = child.key;
+userData = val;
+dbDeviceId = val.deviceId || null;
+}
+});
+
+if(found) {
+const localDeviceId = getLocalDevice();
+if(dbDeviceId && dbDeviceId !== localDeviceId) {
+notify("Login Failed: Active on another device!");
+} else {
+let myDeviceId = localDeviceId;
+if(!dbDeviceId) {
+myDeviceId = Date.now().toString() + Math.random().toString(36).substring(2);
+await update(ref(db, 'users/' + userKey), { deviceId: myDeviceId });
+localStorage.setItem('ngt_device_id', myDeviceId);
+}
+const session = { key: userKey, username: userData.username };
+localStorage.setItem('ngt_auth_user', JSON.stringify(session));
+notify("Login Successful!");
+initUI();
+}
+} else {
+notify("Incorrect Password!");
+}
+} else {
+notify("User ID not found!");
+}
+} catch(x) {
+notify("Connection Error!");
+} finally {
+b.disabled = false; l.style.display = 'block'; s.style.display = 'none';
+}
+});
+
+function notify(txt) {
+const t = document.getElementById('toast');
+t.innerText = txt; t.classList.add('visible');
+setTimeout(() => t.classList.remove('visible'), 3000);
+}
+initUI();
+</script>
+</body>
+</html>
