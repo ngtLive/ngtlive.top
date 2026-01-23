@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Movie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #ff0050;
+    --bg-dark: #0f0f0f;
+    --card-bg: #1a1a1a;
+    --text-main: #ffffff;
+    --text-dim: #a0a0a0;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+  .app-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 70px;
+    background: rgba(15, 15, 15, 0.9);
+    backdrop-filter: blur(15px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5%;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem;
+    background: linear-gradient(45deg, #ff0050, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .loading-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary);
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+  .loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 0, 80, 0.3);
+    border-top: 3px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .search-wrapper {
+    position: relative;
+    width: 40%;
+    max-width: 350px;
+  }
+  .search-wrapper input {
+    width: 100%;
+    background: #222;
+    border: 1px solid #333;
+    padding: 10px 15px 10px 40px;
+    border-radius: 50px;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    outline: none;
+    transition: 0.3s;
+  }
+  .search-wrapper input:focus { border-color: var(--primary); background: #2a2a2a; }
+  .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1.1rem; }
+
+  .container { padding: 100px 5% 80px; min-height: 100vh; }
+  .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+
+  .loading-more {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 0 60px;
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    display: none;
+    min-height: 100px;
+  }
+  .loading-more.active { display: flex; justify-content: center; align-items: center; gap: 10px; }
+
+  .loading-dots { display: inline-flex; gap: 8px; }
+  .dot {
+    width: 10px; height: 10px;
+    background: var(--primary);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out;
+  }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100% { transform: translateY(0); opacity:0.5; } 40% { transform: translateY(-12px); opacity:1; } }
+
+  .card {
+    position: relative;
+    aspect-ratio: 2/3;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s;
+    background: var(--card-bg);
+  }
+  .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+    z-index: 2;
+  }
+  .card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s;
+  }
+  .card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 15px;
+  }
+  @media(max-width: 768px) {
+    .card-overlay { opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.9) 20%, transparent 100%); }
+    .play-btn-card { display: none; }
+  }
+  @media(min-width: 769px) {
+    .card:hover .card-overlay { opacity: 1; }
+  }
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  }
+  .play-btn-card {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px; height: 50px;
+    background: rgba(255, 0, 80, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(255, 0, 80, 0.4);
+    opacity: 0;
+    transform: translate(-50%, -40%);
+    transition: all 0.3s;
+  }
+  .card:hover .play-btn-card { opacity: 1; transform: translate(-50%, -50%); }
+
+  .skeleton {
+    background: #1f1f1f;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0.05) 20%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0));
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+  .player-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  video {
+    width: 100%;
+    max-height: 100vh;
+    aspect-ratio: 16/9;
+  }
+  .player-ui {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .player-ui.hidden { opacity: 0; cursor: none; }
+  .p-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 20px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    pointer-events: auto;
+  }
+  .p-back {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    display: grid; place-items: center;
+  }
+  .p-title { font-size: 1.1rem; font-weight: 600; text-shadow: 0 2px 4px #000; }
+  .p-controls {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 20px 20px 40px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .progress-container {
+    width: 100%;
+    height: 5px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+    border-radius: 5px;
+    position: relative;
+  }
+  .progress-fill::after {
+    content: '';
+    position: absolute; right: -6px; top: -3px;
+    width: 12px; height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.2s;
+  }
+  .progress-container:hover .progress-fill::after { transform: scale(1); }
+  .btn-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .left-btns { display: flex; align-items: center; gap: 20px; }
+  .p-btn {
+    background: none; border: none; color: #fff;
+    cursor: pointer; font-size: 1.5rem;
+    opacity: 0.9; transition: 0.2s;
+  }
+  .p-btn:hover { opacity: 1; transform: scale(1.1); color: var(--primary); }
+  .time-display { font-size: 0.85rem; color: #ddd; font-variant-numeric: tabular-nums; }
+  @media(max-width: 600px) {
+    .movie-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .card { border-radius: 8px; }
+  }
+  .related-view {
+    padding: 20px;
+    background: #0f0f0f;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header" id="mainHeader">
+  <div class="header-left">
+    <div class="logo">NGT<span style="color:#fff; font-weight:300;"> MOVIE 4K</span></div>
+    <div class="loading-area" id="loadingArea">
+      <div class="loading-spinner"></div>
+      <span id="loadedCount">0</span>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search...">
+  </div>
+</header>
+
+<div class="container" id="homeView">
+  <div class="movie-grid" id="movieGrid"></div>
+  <div class="loading-more" id="loadingMore">
+    Loading more movies
+    <div class="loading-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<div class="player-overlay" id="playerOverlay">
+  <div class="video-wrapper" id="videoWrapper">
+    <video id="myVideo" playsinline></video>
+    <div class="player-ui" id="playerUI">
+      <div class="p-top">
+        <button class="p-back" onclick="closePlayer()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </button>
+        <div class="p-title" id="pTitle">Movie Name</div>
+      </div>
+      <div class="p-controls">
+        <div class="progress-container" id="progressBar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="btn-row">
+          <div class="left-btns">
+            <button class="p-btn" id="playPauseBtn">▶</button>
+            <span class="time-display"><span id="currTime">00:00</span> / <span id="durTime">00:00</span></span>
+          </div>
+          <button class="p-btn" id="fsBtn">⛶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="related-view" id="relatedSection">
+    <div class="grid-title" style="font-size:1.1rem">Play Next</div>
+    <div class="movie-grid" id="relatedGrid"></div>
+  </div>
+</div>
+
+<script>
+const M3U_URL = "https://raw.githubusercontent.com/nirob1520/movie/refs/heads/main/MOVIE.m3u";
+let allMovies = [];
+let uiTimer;
+let currentIndex = 0;
+let totalLoaded = 0;
+const BATCH_SIZE = 200;
+const BATCH_INTERVAL = 5000;
+
+const loadingArea = document.getElementById('loadingArea');
+const loadedCountEl = document.getElementById('loadedCount');
+const movieGrid = document.getElementById('movieGrid');
+const loadingMore = document.getElementById('loadingMore');
+const playerOverlay = document.getElementById('playerOverlay');
+const relatedSection = document.getElementById('relatedSection');
+const relatedGrid = document.getElementById('relatedGrid');
+const mainHeader = document.getElementById('mainHeader');
+const video = document.getElementById('myVideo');
+const playerUI = document.getElementById('playerUI');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const progressBar = document.getElementById('progressBar');
+const progressFill = document.getElementById('progressFill');
+const currTimeEl = document.getElementById('currTime');
+const durTimeEl = document.getElementById('durTime');
+const fsBtn = document.getElementById('fsBtn');
+const videoWrapper = document.getElementById('videoWrapper');
+
+function updateLoadedDisplay() {
+  loadedCountEl.textContent = totalLoaded;
+}
+
+function init() {
+  movieGrid.innerHTML = Array(12).fill('<div class="card skeleton"></div>').join('');
+  fetchPlaylist();
+}
+
+async function fetchPlaylist() {
+  try {
+    const res = await fetch(M3U_URL);
+    const text = await res.text();
+    parseM3U(text);
+  } catch(e) {
+    movieGrid.innerHTML = '<p style="color:#fff; text-align:center">Error loading movies.</p>';
+  }
+}
+
+function parseM3U(data) {
+  const lines = data.split('\n');
+  allMovies = [];
+  for(let i = 0; i < lines.length; i++) {
+    if(lines[i].startsWith('#EXTINF')) {
+      const info = lines[i];
+      const url = lines[i+1]?.trim();
+      if(!url || !url.startsWith('http')) continue;
+      const nameMatch = info.match(/,(.+)/);
+      const logoMatch = info.match(/tvg-logo="([^"]+)"/);
+      let name = nameMatch ? nameMatch[1].trim() : "Unknown";
+      let logo = logoMatch ? logoMatch[1].trim() : "";
+      if(logo.includes('image.tmdb.org')) logo = logo.replace('/original/', '/w500/');
+      allMovies.push({ name, logo, url });
+    }
+  }
+  currentIndex = 0;
+  totalLoaded = 0;
+  movieGrid.innerHTML = '';
+  loadingArea.style.display = 'flex';
+  updateLoadedDisplay();
+  loadNextBatch();
+  startBatchLoader();
+}
+
+function loadNextBatch() {
+  if (currentIndex >= allMovies.length) return;
+
+  loadingMore.classList.add('active');
+
+  const end = Math.min(currentIndex + BATCH_SIZE, allMovies.length);
+  const batch = allMovies.slice(currentIndex, end);
+
+  batch.forEach(movie => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const fallback = `https://via.placeholder.com/300x450/111/333?text=${movie.name.charAt(0)}`;
+    card.innerHTML = `
+      <img src="${movie.logo || fallback}" onerror="this.src='${fallback}'" loading="lazy">
+      <div class="card-overlay">
+        <div class="play-btn-card">▶</div>
+        <div class="card-title">${movie.name}</div>
+      </div>
+    `;
+    card.onclick = () => openPlayer(movie);
+    movieGrid.appendChild(card);
+  });
+
+  totalLoaded += batch.length;
+  updateLoadedDisplay();
+
+  currentIndex = end;
+
+  setTimeout(() => {
+    loadingMore.classList.remove('active');
+  }, 800);
+}
+
+function startBatchLoader() {
+  const intervalId = setInterval(() => {
+    if (currentIndex >= allMovies.length) {
+      clearInterval(intervalId);
+      loadingArea.style.display = 'none'; // লোডিং শেষ হলে স্পিনার + সংখ্যা লুকিয়ে যাবে
+      loadingMore.style.display = 'none';
+      return;
+    }
+    loadNextBatch();
+  }, BATCH_INTERVAL);
+}
+
+function renderGrid(list, container, isRelated = false) {
+  container.innerHTML = '';
+  list.forEach(movie => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const fallback = `https://via.placeholder.com/300x450/111/333?text=${movie.name.charAt(0)}`;
+    card.innerHTML = `
+      <img src="${movie.logo || fallback}" onerror="this.src='${fallback}'" loading="lazy">
+      <div class="card-overlay">
+        ${!isRelated ? '<div class="play-btn-card">▶</div>' : ''}
+        <div class="card-title">${movie.name}</div>
+      </div>
+    `;
+    card.onclick = () => openPlayer(movie);
+    container.appendChild(card);
+  });
+}
+
+function openPlayer(movie) {
+  document.getElementById('pTitle').textContent = movie.name;
+  video.src = movie.url;
+  mainHeader.style.transform = "translateY(-100%)";
+  playerOverlay.style.display = 'flex';
+  setTimeout(() => playerOverlay.style.opacity = '1', 10);
+  const suggestions = allMovies.filter(m => m !== movie).sort(() => 0.5 - Math.random()).slice(0, 6);
+  renderGrid(suggestions, relatedGrid, true);
+  relatedSection.style.display = 'block';
+  video.play().then(() => updatePlayIcon(true)).catch(e => console.log(e));
+  window.history.pushState({modal: true}, null, "#watch");
+  resetUiTimer();
+}
+
+function closePlayer() {
+  video.pause();
+  video.src = "";
+  updatePlayIcon(false);
+  playerOverlay.style.opacity = '0';
+  setTimeout(() => {
+    playerOverlay.style.display = 'none';
+    mainHeader.style.transform = "translateY(0)";
+  }, 300);
+  if(window.location.hash === "#watch") window.history.back();
+}
+
+function togglePlay() {
+  if(video.paused) {
+    video.play();
+    updatePlayIcon(true);
+  } else {
+    video.pause();
+    updatePlayIcon(false);
+  }
+}
+
+function updatePlayIcon(isPlaying) {
+  playPauseBtn.textContent = isPlaying ? "⏸" : "▶";
+}
+
+video.addEventListener('timeupdate', () => {
+  if(!video.duration) return;
+  const pct = (video.currentTime / video.duration) * 100;
+  progressFill.style.width = `${pct}%`;
+  currTimeEl.textContent = formatTime(video.currentTime);
+  durTimeEl.textContent = formatTime(video.duration);
+});
+
+progressBar.addEventListener('click', (e) => {
+  const rect = progressBar.getBoundingClientRect();
+  const pos = (e.clientX - rect.left) / rect.width;
+  video.currentTime = pos * video.duration;
+});
+
+fsBtn.addEventListener('click', () => {
+  if(!document.fullscreenElement) {
+    videoWrapper.requestFullscreen().catch(err => console.log(err));
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec < 10 ? '0'+sec : sec}`;
+}
+
+function resetUiTimer() {
+  playerUI.classList.remove('hidden');
+  clearTimeout(uiTimer);
+  uiTimer = setTimeout(() => {
+    if(!video.paused) playerUI.classList.add('hidden');
+  }, 3500);
+}
+
+videoWrapper.addEventListener('mousemove', resetUiTimer);
+videoWrapper.addEventListener('click', (e) => {
+  if(e.target.closest('.p-controls') || e.target.closest('.p-top')) {
+    resetUiTimer();
+    return;
+  }
+  togglePlay();
+  resetUiTimer();
+});
+
+playPauseBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  togglePlay();
+});
+
+window.addEventListener('popstate', () => {
+  if (playerOverlay.style.display === 'flex') {
+    video.pause();
+    video.src = "";
+    playerOverlay.style.opacity = '0';
+    setTimeout(() => {
+      playerOverlay.style.display = 'none';
+      mainHeader.style.transform = "translateY(0)";
+    }, 300);
+  }
+});
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const term = e.target.value.toLowerCase();
+  const filtered = allMovies.filter(m => m.name.toLowerCase().includes(term));
+  movieGrid.innerHTML = '';
+  currentIndex = 0;
+  totalLoaded = 0;
+  updateLoadedDisplay();
+  loadingMore.classList.remove('active');
+  renderGrid(filtered, movieGrid);
+});
+
+init();
+</script>
+</body>
+</html>
