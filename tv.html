@@ -26,10 +26,10 @@
             color: #fff;
             overflow: hidden;
             height: 100vh;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* Internet Explorer/Edge */
+            user-select: none;         /* Standard */
         }
         .app {
             display: flex;
@@ -39,6 +39,7 @@
             overflow: hidden;
         }
        
+        /* PLAYER AREA - একদম টপ থেকে শুরু */
         .player-area {
             flex-shrink: 0;
             width: 100%;
@@ -48,7 +49,7 @@
         .video-wrapper {
             position: relative;
             width: 100%;
-            padding-top: 56.25%;
+            padding-top: 56.25%; /* 16:9 aspect ratio */
             background: #000;
         }
         #hls-plyr-video {
@@ -175,6 +176,7 @@
             background: linear-gradient(transparent, rgba(0,0,0,0.9)) !important;
             backdrop-filter: blur(5px);
         }
+        /* CHANNEL AREA */
         .channel-area {
             flex: 1;
             display: flex;
@@ -245,7 +247,7 @@
         }
         .channels-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr); /* মোবাইলে প্রতি লাইনে ৩টি চ্যানেল */
             gap: 12px;
         }
         .channel-card {
@@ -279,34 +281,9 @@
             opacity: 1;
         }
         .channel-card.active {
-            border: 3px solid transparent;
-            background: linear-gradient(#222, #1a1a1a) padding-box,
-                        conic-gradient(
-                            #ff0000 0deg, #ff7f00 45deg, #ffff00 90deg, #00ff00 135deg,
-                            #00c8ff 180deg, #7f00ff 225deg, #ff007f 270deg, #ff0000 315deg, #ff0000 360deg
-                        ) border-box;
-            background-size: 300% 300%;
-            animation: rgbBorderRotate 8s linear infinite;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            border-color: #00ff55;
+            box-shadow: 0 0 20px rgba(0, 255, 85, 0.5);
             transform: translateY(-2px);
-        }
-        @keyframes rgbBorderRotate {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 300% 50%; }
-        }
-        .channel-card.active .channel-name {
-            animation: rgbText 5s linear infinite;
-            font-weight: 700;
-        }
-        @keyframes rgbText {
-            0%   { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
-            14%  { color: #ff7f00; text-shadow: 0 0 10px #ff7f00; }
-            28%  { color: #ffff00; text-shadow: 0 0 10px #ffff00; }
-            42%  { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
-            57%  { color: #00c8ff; text-shadow: 0 0 10px #00c8ff; }
-            71%  { color: #7f00ff; text-shadow: 0 0 10px #7f00ff; }
-            85%  { color: #ff007f; text-shadow: 0 0 10px #ff007f; }
-            100% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
         }
         .channel-logo {
             width: 85px;
@@ -323,7 +300,7 @@
         .channel-logo img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Changed from 'contain' to 'cover' */
         }
         .channel-logo .default-logo {
             font-size: 30px;
@@ -363,6 +340,7 @@
             opacity: 0.5;
         }
         
+        /* মোবাইল ভিউ (ডিফল্ট) - প্রতি লাইনে ৩টি */
         @media (max-width: 1024px) {
             .channels-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -381,6 +359,7 @@
             }
         }
         
+        /* ছোট মোবাইলের জন্য */
         @media (max-width: 480px) {
             .channels-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -399,6 +378,7 @@
             }
         }
         
+        /* ট্যাবলেট ভিউ (ল্যান্ডস্কেপ) */
         @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
             .channels-grid {
                 grid-template-columns: repeat(4, 1fr);
@@ -416,6 +396,7 @@
             }
         }
         
+        /* ডেস্কটপ ভিউ - একদম ডানে চ্যানেল তালিকা */
         @media (min-width: 1025px) {
             .app {
                 flex-direction: row;
@@ -462,6 +443,7 @@
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
     <div class="app">
+        <!-- PLAYER AREA - একদম উপর থেকে শুরু -->
         <div class="player-area">
             <div class="video-wrapper">
                 <div class="loading-container" id="loadingContainer">
@@ -483,6 +465,7 @@
                 </div>
             </div>
         </div>
+        <!-- CHANNEL AREA -->
         <div class="channel-area">
             <div class="channel-header">
                 <h3>
@@ -504,9 +487,6 @@
             </div>
         </div>
     </div>
-
-    <!-- তোমার JavaScript অংশ একদম আগের মতোই আছে, কোনো চেঞ্জ নেই -->
-
     <script>
         // Disable some keyboard shortcuts that could be used for copying/dev tools
         document.addEventListener('keydown', function(e) {
@@ -520,7 +500,7 @@
             }
         });
 
-        const playlist = "https://private-zone-by-xfireflix.pages.dev/playlist-isp-bdix.m3u";
+        const playlist = "https://raw.githubusercontent.com/nirob1520/NGTtelevision/refs/heads/main/NGTtelevision.m3u";
 
         const channelsGrid = document.getElementById("channelsGrid");
         const channelCountElement = document.getElementById("channelCount");
@@ -622,6 +602,7 @@
                 channelCard.className = 'channel-card';
                 channelCard.dataset.index = index;
               
+                // FIXED: HTML স্ট্রিং এ সমস্যা ঠিক করা হয়েছে
                 let logoHTML;
                 if (channel.logo === DEFAULT_LOGO) {
                     logoHTML = `<i class="fas fa-tv default-logo"></i>`;
