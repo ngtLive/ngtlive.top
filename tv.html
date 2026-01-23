@@ -563,9 +563,9 @@
               
                 if (line.startsWith("#EXTINF")) {
                     currentChannel = {
-                        name: line.split(",")[1] || "Unknown Channel",
-                        logo: extractLogoUrl(line) || DEFAULT_LOGO,
-                        group: extractGroup(line) || "General"
+                        name: extractChannelName(line),
+                        logo: extractLogoUrl(line),
+                        group: extractGroup(line)
                     };
                 } else if (line.startsWith("http")) {
                     if (currentChannel.name) {
@@ -578,13 +578,42 @@
           
             filteredChannels = [...channels];
         }
+        function extractChannelName(line) {
+            // First try to get name from tvg-name attribute
+            const tvgNameMatch = line.match(/tvg-name="([^"]+)"/);
+            if (tvgNameMatch && tvgNameMatch[1]) {
+                return tvgNameMatch[1];
+            }
+            
+            // If no tvg-name, get name from the end of the EXTINF line
+            const parts = line.split(",");
+            if (parts.length > 1) {
+                return parts[parts.length - 1].trim();
+            }
+            
+            return "Unknown Channel";
+        }
         function extractLogoUrl(line) {
-            const match = line.match(/tvg-logo="([^"]+)"/);
-            return match ? match[1] : DEFAULT_LOGO;
+            // Try multiple patterns to extract logo URL
+            const patterns = [
+                /tvg-logo="([^"]+)"/i,
+                /tvg-logo="([^"]*)"/i,
+                /logo="([^"]+)"/i,
+                /logo="([^"]*)"/i
+            ];
+            
+            for (const pattern of patterns) {
+                const match = line.match(pattern);
+                if (match && match[1] && match[1].trim() !== "") {
+                    return match[1].trim();
+                }
+            }
+            
+            return DEFAULT_LOGO;
         }
         function extractGroup(line) {
-            const match = line.match(/group-title="([^"]+)"/);
-            return match ? match[1] : null;
+            const match = line.match(/group-title="([^"]+)"/i);
+            return match ? match[1] : "General";
         }
         function buildChannelUI() {
             channelsGrid.innerHTML = '';
