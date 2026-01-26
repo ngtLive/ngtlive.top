@@ -4,17 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sports Live TV</title>
-
 <!-- Clappr Player -->
 <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
-
 <style>
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
-
+  html, body {
+    overflow-x: hidden;           /* হরিজন্টাল স্ক্রল বন্ধ */
+    -ms-overflow-style: none;     /* IE + Edge */
+    scrollbar-width: none;        /* Firefox */
+  }
+  body::-webkit-scrollbar {       /* Chrome, Safari, Opera */
+    display: none;
+  }
   body {
     font-family: Arial, sans-serif;
     background: #0b1a3a;
@@ -22,18 +27,18 @@
     min-height: 100vh;
   }
 
-  /* Fixed Player - সবসময় উপরে থাকবে */
+  /* প্লেয়ার ওয়ার্পার — শুরুতে লুকানো */
   #player-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 220px;           /* মোবাইলে এই উচ্চতা */
+    height: 220px;
     background: #000;
     z-index: 1000;
+    display: none;
   }
 
-  /* 16:9 aspect ratio for video player */
   #player {
     width: 100%;
     height: 100%;
@@ -45,18 +50,21 @@
     height: 100%;
   }
 
-  /* এটাই মূল ফিক্স: Clappr-এর ভিতরের video ট্যাগকে full cover করা */
   .clappr-video-container video {
     object-fit: cover !important;
     width: 100% !important;
     height: 100% !important;
   }
 
-  /* চ্যানেল লিস্ট — প্লেয়ারের নিচ থেকে শুরু হবে */
+  /* চ্যানেল লিস্ট */
   .channels-container {
-    padding-top: 220px;
-    padding: 230px 15px 15px 15px;
+    padding: 15px;
     min-height: 100vh;
+  }
+
+  /* প্লেয়ার চালু থাকলে চ্যানেল লিস্ট নিচে ঠেলে দেওয়া */
+  .player-active .channels-container {
+    padding-top: 230px;
   }
 
   .channels {
@@ -116,32 +124,29 @@
     color: white;
   }
 
-  /* ডেস্কটপ/বড় স্ক্রিনে সাইড বাই সাইড + ফিক্সড প্লেয়ার */
+  /* ডেস্কটপ/বড় স্ক্রিন */
   @media (min-width: 992px) {
     #player-wrapper {
       width: 65%;
-      height: 100vh;          /* পুরো স্ক্রিন উচ্চতা */
+      height: 100vh;
     }
-
-    .channels-container {
+    .player-active .channels-container {
       margin-left: 65%;
       padding-top: 0;
       padding: 20px;
       width: 35%;
     }
-
     .channels {
       grid-template-columns: 1fr;
     }
   }
 
-  /* ট্যাবলেট - একটু বড় প্লেয়ার */
+  /* ট্যাবলেট */
   @media (min-width: 768px) and (max-width: 991px) {
     #player-wrapper {
       height: 360px;
     }
-
-    .channels-container {
+    .player-active .channels-container {
       padding-top: 370px;
     }
   }
@@ -154,7 +159,7 @@
   <div id="player" class="video"></div>
 </div>
 
-<!-- Channels (স্ক্রল হবে) -->
+<!-- Channels -->
 <div class="channels-container">
   <div class="channels">
 
@@ -172,7 +177,7 @@
       </div>
     </div>
 
-<!-- Channel 2 -->
+    <!-- Channel 2 -->
     <div class="channel-card" onclick="playChannel('https://bd-mc-fdlive.fancode.com/mumbai/138949_english_hls_f7e380fec481055_1ta-di_h264/index.m3u8')">
       <img src="https://i.supaimg.com/9bcab663-44c4-4c61-b415-b52c5e84b954.jpg" alt="Match">
       <div class="match-title">Fancode Live Match – Live Sports</div>
@@ -185,22 +190,22 @@
         <div class="btn">▶ FANCODE MATCH LIVE</div>
       </div>
     </div>
-    
+
     <!-- Channel 3 -->
     <div class="channel-card" onclick="playChannel('https://padmaonline.duckdns.org:8088/StarPlusHD/index.m3u8')">
       <img src="https://i.ytimg.com/vi/wBYXhfUJYOk/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBmxPcczyWhLbipZ6R5GvBBMpUvpg" alt="Match">
-      <div class="match-title">Star Plus TV – Live Series </div>
+      <div class="match-title">Star Plus TV – Live Series</div>
       <div class="teams">
         <div class="team">⋆🏐⋆<br>Name</div>
         <div class="vs">VS</div>
         <div class="team">⋆🏐⋆<br>Name</div>
       </div>
       <div class="buttons">
-        <div class="btn">▶ WATCH  STAR PLUS LIVE</div>
+        <div class="btn">▶ WATCH STAR PLUS LIVE</div>
       </div>
     </div>
 
-<!-- Channel 4 -->
+    <!-- Channel 4 -->
     <div class="channel-card" onclick="playChannel('http://116.204.149.16/nagorik/index.m3u8')">
       <img src="https://i.supaimg.com/668a51f9-a6e7-46a7-a201-2b34ce1d436c.jpg" alt="Match">
       <div class="match-title">Nagorik TV – Live Sports & Movie</div>
@@ -210,16 +215,16 @@
         <div class="team">⋆🏐⋆<br>Name</div>
       </div>
       <div class="buttons">
-        <div class="btn">▶ WATCH  NAGORIK TV LIVE</div>
+        <div class="btn">▶ WATCH NAGORIK TV LIVE</div>
       </div>
     </div>
-    
+
   </div>
 </div>
 
 <script>
   var player = new Clappr.Player({
-    source: 'https://spstr.abntv.live/hls/psstream.m3u8',
+    source: '',  // শুরুতে কোনো সোর্স নেই
     parentId: '#player',
     autoPlay: true,
     mute: false,
@@ -230,8 +235,11 @@
   function playChannel(url) {
     player.load(url);
     player.play();
+
+    // প্লেয়ার দেখাও + চ্যানেল লিস্ট নিচে সরাও
+    document.getElementById('player-wrapper').style.display = 'block';
+    document.body.classList.add('player-active');
   }
 </script>
-
 </body>
 </html>
