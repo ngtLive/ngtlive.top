@@ -136,7 +136,7 @@
     }
   }
 
-  /* ডেস্কটপ / বড় স্ক্রিন — শুধু এখানে ৩টা পাশাপাশি */
+  /* ডেস্কটপ / বড় স্ক্রিন — শুধু এখানে পরিবর্তন করা হয়েছে */
   @media (min-width: 992px) {
     #player-wrapper {
       width: 65%;
@@ -148,9 +148,14 @@
       padding: 20px;
       width: 35%;
     }
+    /* হোমপেজে (প্লেয়ার বন্ধ থাকলে) ৩টা পাশাপাশি */
     .channels {
-      grid-template-columns: repeat(3, 1fr);   /* পাশাপাশি ৩টা করে */
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
+    }
+    /* প্লেয়ার চালু থাকলে ১টা করে নিচে */
+    .player-active .channels {
+      grid-template-columns: 1fr;
     }
   }
 </style>
