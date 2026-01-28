@@ -27,6 +27,64 @@
     min-height: 100vh;
   }
 
+  /* === স্লাইডার স্টাইল (ইউটিউব ব্যানার সাইজের মতো 16:9 aspect) === */
+  .slider-container {
+    width: 100%;
+    height: 220px;          /* মোবাইলে শুরুতে ছোট */
+    overflow: hidden;
+    position: relative;
+    background: #000;
+  }
+
+  .slides {
+    display: flex;
+    width: 400%;            /* ৪টা ছবি */
+    height: 100%;
+    animation: slideAnimation 12s infinite;   /* ৩ সেকেন্ড × ৪ = ১২সেকেন্ড */
+  }
+
+  .slide {
+    width: 25%;
+    height: 100%;
+  }
+
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* ইউটিউব ব্যানারের মতো — কোনোদিকে স্ট্রেচ/ছোট-বড় হবে না */
+    display: block;
+  }
+
+  @keyframes slideAnimation {
+    0%    { transform: translateX(0); }
+    23%   { transform: translateX(0); }
+    25%   { transform: translateX(-25%); }
+    48%   { transform: translateX(-25%); }
+    50%   { transform: translateX(-50%); }
+    73%   { transform: translateX(-50%); }
+    75%   { transform: translateX(-75%); }
+    98%   { transform: translateX(-75%); }
+    100%  { transform: translateX(0); }
+  }
+
+  /* Responsive height — চ্যানেল কার্ডের মতোই দেখাবে */
+  @media (min-width: 768px) {
+    .slider-container {
+      height: 300px;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .slider-container {
+      height: 400px;        /* ডেস্কটপ/টিভিতে বড়, ইউটিউব ব্যানারের মতো ফিল */
+    }
+  }
+
+  /* player চালু হলে স্লাইডার হাইড */
+  .player-active .slider-container {
+    display: none;
+  }
+
   /* প্লেয়ার ওয়ার্পার */
   #player-wrapper {
     position: fixed;
@@ -38,18 +96,15 @@
     z-index: 1000;
     display: none;
   }
-
   #player {
     width: 100%;
     height: 100%;
   }
-
   .video {
     aspect-ratio: 16 / 9;
     width: 100%;
     height: 100%;
   }
-
   .clappr-video-container video {
     object-fit: cover !important;
     width: 100% !important;
@@ -61,58 +116,48 @@
     padding: 15px;
     min-height: 100vh;
   }
-
   .player-active .channels-container {
     padding-top: 230px;
   }
-
   .channels {
     display: grid;
-    grid-template-columns: 1fr;   /* মোবাইলে + ছোট স্ক্রিনে ১টা করে */
+    grid-template-columns: 1fr;
     gap: 20px;
   }
-
   .channel-card {
     background: #132c63;
     border-radius: 18px;
     padding: 15px;
     cursor: pointer;
   }
-
   .channel-card img {
     width: 100%;
     border-radius: 12px;
     display: block;
   }
-
   .match-title {
     text-align: center;
     font-weight: bold;
     margin: 10px 0;
   }
-
   .teams {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 10px 0;
   }
-
   .team {
     text-align: center;
     font-size: 14px;
   }
-
   .vs {
     font-weight: bold;
   }
-
   .buttons {
     display: flex;
     gap: 10px;
     margin-top: 12px;
   }
-
   .btn {
     flex: 1;
     padding: 10px;
@@ -123,7 +168,6 @@
     color: white;
   }
 
-  /* ট্যাবলেট — এখানেও ১টা করে রাখা হলো (মোবাইলের মতো) */
   @media (min-width: 768px) and (max-width: 991px) {
     #player-wrapper {
       height: 360px;
@@ -136,7 +180,6 @@
     }
   }
 
-  /* ডেস্কটপ / বড় স্ক্রিন — শুধু এখানে পরিবর্তন করা হয়েছে */
   @media (min-width: 992px) {
     #player-wrapper {
       width: 65%;
@@ -148,12 +191,10 @@
       padding: 20px;
       width: 35%;
     }
-    /* হোমপেজে (প্লেয়ার বন্ধ থাকলে) ৩টা পাশাপাশি */
     .channels {
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
-    /* প্লেয়ার চালু থাকলে ১টা করে নিচে */
     .player-active .channels {
       grid-template-columns: 1fr;
     }
@@ -161,6 +202,25 @@
 </style>
 </head>
 <body>
+
+<!-- হোমপেজ স্লাইডার (ইউটিউব ব্যানার স্টাইলে) -->
+<div class="slider-container">
+  <div class="slides">
+    <!-- আপনার পছন্দের ছবি দিন — 2560x1440 px সাইজের ছবি দিলে সবচেয়ে ভালো দেখাবে -->
+    <div class="slide">
+      <img src="https://i.supaimg.com/c7ebcf4c-a0c7-4414-adb0-e36002e30dd7.jpg" alt="Slide 1">
+    </div>
+    <div class="slide">
+      <img src="https://i.ibb.co.com/rKtBvRSN/20250219-184116.png">
+    </div>
+    <div class="slide">
+      <img src="https://i.supaimg.com/668a51f9-a6e7-46a7-a201-2b34ce1d436c.jpg" alt="Slide 3">
+    </div>
+    <div class="slide">
+      <img src="https://i.ibb.co.com/rKtBvRSN/20250219-184116.png">
+    </div>
+  </div>
+</div>
 
 <!-- Fixed Player -->
 <div id="player-wrapper">
@@ -170,7 +230,6 @@
 <!-- Channels -->
 <div class="channels-container">
   <div class="channels">
-
     <!-- Channel 1 -->
     <div class="channel-card" onclick="playChannel('https://live20.bozztv.com/giatv/giatv-tsports/tsports/chunks.m3u8')">
       <img src="https://i.supaimg.com/c7ebcf4c-a0c7-4414-adb0-e36002e30dd7.jpg" alt="Match">
@@ -184,7 +243,6 @@
         <div class="btn">▶ WATCH T-SPORTS LIVE</div>
       </div>
     </div>
-
     <!-- Channel 2 -->
     <div class="channel-card" onclick="playChannel('https://bd-mc-fdlive.fancode.com/mumbai/138949_english_hls_f7e380fec481055_1ta-di_h264/index.m3u8')">
       <img src="https://i.supaimg.com/9bcab663-44c4-4c61-b415-b52c5e84b954.jpg" alt="Match">
@@ -198,7 +256,6 @@
         <div class="btn">▶ FANCODE MATCH LIVE</div>
       </div>
     </div>
-
     <!-- Channel 3 -->
     <div class="channel-card" onclick="playChannel('http://116.204.149.16/nagorik/index.m3u8')">
       <img src="https://i.supaimg.com/668a51f9-a6e7-46a7-a201-2b34ce1d436c.jpg" alt="Match">
@@ -212,7 +269,6 @@
         <div class="btn">▶ WATCH NAGORIK TV LIVE</div>
       </div>
     </div>
-
     <!-- Channel 4 -->
     <div class="channel-card" onclick="playChannel('https://padmaonline.duckdns.org:8088/StarPlusHD/index.m3u8')">
       <img src="https://i.ytimg.com/vi/wBYXhfUJYOk/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBmxPcczyWhLbipZ6R5GvBBMpUvpg" alt="Match">
@@ -226,13 +282,12 @@
         <div class="btn">▶ WATCH STAR PLUS LIVE</div>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
   var player = new Clappr.Player({
-    source: '',  // শুরুতে কোনো সোর্স নেই
+    source: '', 
     parentId: '#player',
     autoPlay: true,
     mute: false,
@@ -243,8 +298,6 @@
   function playChannel(url) {
     player.load(url);
     player.play();
-
-    // প্লেয়ার দেখাও + চ্যানেল লিস্ট নিচে সরাও
     document.getElementById('player-wrapper').style.display = 'block';
     document.body.classList.add('player-active');
   }
