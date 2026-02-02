@@ -22,17 +22,27 @@
   }
   body {
     font-family: Arial, sans-serif;
-    background: #000;               /* কালো ব্যাকগ্রাউন্ড */
-    color: #fff;
+    background: #1e1e1e;
+    color: #ffffff;
     min-height: 100vh;
   }
-  /* === স্লাইডার স্টাইল (fade animation) === */
+
+  /* === Featured Slider Card === */
+  .featured-card {
+    background: #1e1e1e;
+    border-radius: 18px;
+    padding: 15px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+
   .slider-container {
     width: 100%;
-    height: 180px; /* মোবাইলে শুরুতে ছোট */
+    height: 180px;
     overflow: hidden;
     position: relative;
-    background: #000;
+    background: #1e1e1e;
+    border-radius: 12px;
   }
   .slides {
     width: 100%;
@@ -46,7 +56,7 @@
     width: 100%;
     height: 100%;
     opacity: 0;
-    transition: opacity 1.2s ease-in-out;   /* smooth fade transition */
+    transition: opacity 1.2s ease-in-out;
   }
   .slide img {
     width: 100%;
@@ -54,7 +64,7 @@
     object-fit: cover;
     display: block;
   }
-  /* fade animation keyframes */
+
   .slide:nth-child(1) { animation: fade 16s infinite; }
   .slide:nth-child(2) { animation: fade 16s infinite 4s; }
   .slide:nth-child(3) { animation: fade 16s infinite 8s; }
@@ -68,31 +78,25 @@
     100%  { opacity: 0; }
   }
 
-  /* Responsive height */
   @media (min-width: 768px) {
-    .slider-container {
-      height: 300px;
-    }
+    .slider-container { height: 300px; }
   }
   @media (min-width: 992px) {
-    .slider-container {
-      height: 400px;
-    }
+    .slider-container { height: 400px; }
   }
 
-  /* player চালু হলে স্লাইডার হাইড */
-  .player-active .slider-container {
+  .player-active .featured-card {
     display: none;
   }
 
-  /* প্লেয়ার ওয়ার্পার */
+  /* প্লেয়ার */
   #player-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 220px;
-    background: #000;
+    background: #1e1e1e;
     z-index: 1000;
     display: none;
   }
@@ -125,7 +129,7 @@
     gap: 20px;
   }
   .channel-card {
-    background: #132c63;
+    background: #1e1e1e;
     border-radius: 18px;
     padding: 15px;
     cursor: pointer;
@@ -167,16 +171,10 @@
     background: #1e63ff;
     color: white;
   }
+
   @media (min-width: 768px) and (max-width: 991px) {
-    #player-wrapper {
-      height: 360px;
-    }
-    .player-active .channels-container {
-      padding-top: 370px;
-    }
-    .channels {
-      grid-template-columns: 1fr;
-    }
+    #player-wrapper { height: 360px; }
+    .player-active .channels-container { padding-top: 370px; }
   }
   @media (min-width: 992px) {
     #player-wrapper {
@@ -201,20 +199,22 @@
 </head>
 <body>
 
-<!-- হোমপেজ স্লাইডার (fade animation) -->
-<div class="slider-container">
-  <div class="slides">
-    <div class="slide">
-      <img src="https://cdn.bongo-solutions.com/abfea462-f64d-491e-9cd9-75ee001f45b0/content/d961fe4c-1ae8-4f8f-ac91-e009a3a32391/48e60b75-3efc-4f3f-ae96-ff971e300e55.jpg?width=640" alt="Slide 1">
-    </div>
-    <div class="slide">
-      <img src="https://cdn.bongo-solutions.com/abfea462-f64d-491e-9cd9-75ee001f45b0/content/0128b895-82df-404d-9902-20dfd5628bca/896ad852-cc75-4962-8601-49d0f8d97f81.jpg?width=1920">
-    </div>
-    <div class="slide">
-      <img src="https://cdn.bongo-solutions.com/abfea462-f64d-491e-9cd9-75ee001f45b0/content/1621ee78-f4dd-4386-ae52-2b8ff470a389/d84b11b6-7a7d-421a-abc3-a44d5e250ac6.jpg?width=1920" alt="Slide 3">
-    </div>
-    <div class="slide">
-      <img src="https://akashgo-mediaready.videoready.tv/akashgo/image/fetch/f_auto,fl_lossy,q_auto,w_926,h_462/https://tstatic.akash-go.com/Zee/Images/TritioAdhyaybengali_Landscape.jpg">
+<!-- Featured Slider inside one card -->
+<div class="featured-card">
+  <div class="slider-container">
+    <div class="slides">
+      <div class="slide">
+        <img src="https://cdn.bongo-solutions.com/abfea462-f64d-491e-9cd9-75ee001f45b0/content/d961fe4c-1ae8-4f8f-ac91-e009a3a32391/48e60b75-3efc-4f3f-ae96-ff971e300e55.jpg?width=640" alt="Slide 1">
+      </div>
+      <div class="slide">
+        <img src="https://cdn.bongo-solutions.com/abfea462-f64d-491e-9cd9-75ee001f45b0/content/0128b895-82df-404d-9902-20dfd5628bca/896ad852-cc75-4962-8601-49d0f8d97f81.jpg?width=1920">
+      </div>
+      <div class="slide">
+        <img src="https://cdn.bongo-solutions.com/abfea462-f64d-491e-9cd9-75ee001f45b0/content/1621ee78-f4dd-4386-ae52-2b8ff470a389/d84b11b6-7a7d-421a-abc3-a44d5e250ac6.jpg?width=1920" alt="Slide 3">
+      </div>
+      <div class="slide">
+        <img src="https://akashgo-mediaready.videoready.tv/akashgo/image/fetch/f_auto,fl_lossy,q_auto,w_926,h_462/https://tstatic.akash-go.com/Zee/Images/TritioAdhyaybengali_Landscape.jpg">
+      </div>
     </div>
   </div>
 </div>
@@ -240,6 +240,7 @@
         <div class="btn">▶ WATCH T-SPORTS LIVE</div>
       </div>
     </div>
+
     <!-- Channel 2 -->
     <div class="channel-card" onclick="playChannel('https://bd-mc-fdlive.fancode.com/mumbai/138949_english_hls_f7e380fec481055_1ta-di_h264/index.m3u8')">
       <img src="https://i.supaimg.com/9bcab663-44c4-4c61-b415-b52c5e84b954.jpg" alt="Match">
@@ -253,6 +254,7 @@
         <div class="btn">▶ FANCODE MATCH LIVE</div>
       </div>
     </div>
+
     <!-- Channel 3 -->
     <div class="channel-card" onclick="playChannel('http://116.204.149.16/nagorik/index.m3u8')">
       <img src="https://i.supaimg.com/668a51f9-a6e7-46a7-a201-2b34ce1d436c.jpg" alt="Match">
@@ -266,6 +268,7 @@
         <div class="btn">▶ WATCH NAGORIK TV LIVE</div>
       </div>
     </div>
+
     <!-- Channel 4 -->
     <div class="channel-card" onclick="playChannel('https://padmaonline.duckdns.org:8088/StarPlusHD/index.m3u8')">
       <img src="https://i.ytimg.com/vi/wBYXhfUJYOk/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBmxPcczyWhLbipZ6R5GvBBMpUvpg" alt="Match">
