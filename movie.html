@@ -350,8 +350,8 @@ const videoWrapper = document.getElementById('videoWrapper');
 const canvas = document.getElementById('particles-bg');
 const ctx = canvas.getContext('2d');
 let stars = [];
-const STAR_COUNT = 160;
-const GLOW_LAYERS = 4;
+const STAR_COUNT = 80;
+const GLOW_LAYERS = 20;
 
 class Star {
   constructor() {
@@ -446,7 +446,7 @@ function init() {
 
 async function fetchFromJsonBin() {
   try {
-    console.log("JSONBin থেকে ডেটা লোড করা হচ্ছে...");
+    console.log("থেকে ডেটা লোড করা হচ্ছে...");
     const res = await fetch(JSONBIN_URL);
     console.log("Response status:", res.status);
     
@@ -455,7 +455,7 @@ async function fetchFromJsonBin() {
     }
     
     const data = await res.json();
-    console.log("JSON ডেটা পাওয়া গেছে:", data);
+    console.log("ডেটা পাওয়া গেছে:", data);
     
     const groups = data.record?.groups || [];
     console.log("গ্রুপের সংখ্যা:", groups.length);
@@ -480,7 +480,7 @@ async function fetchFromJsonBin() {
     }
     
     if (allMovies.length === 0) {
-      throw new Error("JSON থেকে কোনো valid মুভি পাওয়া যায়নি");
+      throw new Error("কোনো valid মুভি পাওয়া যায়নি");
     }
     
     currentIndex = 0;
@@ -495,7 +495,7 @@ async function fetchFromJsonBin() {
     movieGrid.innerHTML = `<p style="color:#ff5555; text-align:center; padding:80px 20px; font-size:1.3rem;">
       মুভি লোড হয়নি 😔<br><br>
       Error: ${e.message}<br>
-      F12 চাপো → Console ট্যাবে বিস্তারিত দেখো (কতগুলো মুভি পেয়েছে সেটা বলবে)
+      Error)
     </p>`;
   }
 }
