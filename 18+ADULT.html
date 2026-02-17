@@ -35,7 +35,6 @@
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: #111; }
   ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
   .app-header {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -93,20 +92,17 @@
   }
   .search-wrapper input:focus { border-color: var(--primary); background: #2a2a2a; }
   .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1.1rem; }
-
-  .container { 
-    padding: 100px 4px 80px; 
-    min-height: 100vh; 
-    position: relative; 
-    z-index: 1; 
+  .container {
+    padding: 100px 4px 80px;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
   }
-
   .movie-grid {
     display: grid;
     gap: 10px;
     grid-template-columns: repeat(3, 1fr);
   }
-
   @media (min-width: 1024px) {
     .container { padding: 100px 0 80px; }
     .movie-grid {
@@ -117,11 +113,9 @@
       margin: 0 auto;
     }
   }
-
   @media (min-width: 1400px) {
     .movie-grid { gap: 12px; padding: 0 8px; }
   }
-
   .loading-more {
     grid-column: 1 / -1;
     text-align: center;
@@ -142,7 +136,6 @@
   .dot:nth-child(2) { animation-delay: 0.2s; }
   .dot:nth-child(3) { animation-delay: 0.4s; }
   @keyframes bounce { 0%,80%,100% { transform: translateY(0); opacity:0.5; } 40% { transform: translateY(-12px); opacity:1; } }
-
   .card {
     position: relative;
     aspect-ratio: 2/3;
@@ -203,7 +196,6 @@
     transition: all 0.3s;
   }
   .card:hover .play-btn-card { opacity: 1; transform: translate(-50%, -50%); }
-
   .skeleton {
     background: #1f1f1f;
     border-radius: 12px;
@@ -219,7 +211,6 @@
     animation: shimmer 2s infinite;
   }
   @keyframes shimmer { 100% { transform: translateX(100%); } }
-
   .player-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -243,26 +234,49 @@
   video { width: 100%; height: 100%; object-fit: contain; }
   .player-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; transition: opacity 0.3s ease; }
   .player-ui.hidden { opacity: 0; cursor: none; }
-  .p-top { position: absolute; top: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); display: flex; align-items: center; gap: 20px; pointer-events: auto; }
-  .p-back { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; backdrop-filter: blur(5px); display: grid; place-items: center; }
+  .p-top { 
+    position: absolute; top: 0; left: 0; right: 0; 
+    padding: 20px; 
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); 
+    display: flex; align-items: center; gap: 20px; 
+    pointer-events: auto; 
+  }
+  .p-back { 
+    background: rgba(255,255,255,0.1); border: none; color: #fff; 
+    width: 40px; height: 40px; border-radius: 50%; cursor: pointer; 
+    backdrop-filter: blur(5px); display: grid; place-items: center; 
+  }
   .p-title { font-size: 1.1rem; font-weight: 600; text-shadow: 0 2px 4px #000; }
-  .p-controls { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 20px 40px 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); pointer-events: auto; display: flex; flex-direction: column; gap: 10px; }
-  .progress-container { width: 100%; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; cursor: pointer; position: relative; }
-  .progress-fill { height: 100%; background: var(--primary); width: 0%; border-radius: 5px; position: relative; }
-  .progress-fill::after { content: ''; position: absolute; right: -6px; top: -3px; width: 12px; height: 12px; background: #fff; border-radius: 50%; transform: scale(0); transition: transform 0.2s; }
+  .p-controls { 
+    position: absolute; bottom: 0; left: 0; right: 0; 
+    padding: 20px 20px 40px 20px; 
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); 
+    pointer-events: auto; 
+    display: flex; flex-direction: column; gap: 10px; 
+  }
+  .progress-container { 
+    width: 100%; height: 5px; background: rgba(255,255,255,0.2); 
+    border-radius: 5px; cursor: pointer; position: relative; 
+  }
+  .progress-fill { 
+    height: 100%; background: var(--primary); width: 0%; 
+    border-radius: 5px; position: relative; 
+  }
+  .progress-fill::after { 
+    content: ''; position: absolute; right: -6px; top: -3px; 
+    width: 12px; height: 12px; background: #fff; 
+    border-radius: 50%; transform: scale(0); transition: transform 0.2s; 
+  }
   .progress-container:hover .progress-fill::after { transform: scale(1); }
   .btn-row { display: flex; align-items: center; justify-content: space-between; }
   .left-btns { display: flex; align-items: center; gap: 20px; }
   .p-btn { background: none; border: none; color: #fff; cursor: pointer; font-size: 1.5rem; opacity: 0.9; transition: 0.2s; }
   .p-btn:hover { opacity: 1; transform: scale(1.1); color: var(--primary); }
   .time-display { font-size: 0.85rem; color: #ddd; font-variant-numeric: tabular-nums; }
-
-  /* Play Next সেকশন লুকানোর জন্য নতুন ক্লাস */
-  .related-view { display: none !important; }  /* এখন পুরোপুরি লুকানো থাকবে */
+  .related-view { display: none !important; }
 </style>
 </head>
 <body>
-
 <canvas id="particles-bg"></canvas>
 
 <header class="app-header" id="mainHeader">
@@ -315,11 +329,14 @@
       </div>
     </div>
   </div>
-  <!-- Play Next সেকশন রাখা আছে কিন্তু CSS দিয়ে লুকানো + JS-এ আর রেন্ডার করা হবে না -->
   <div class="related-view" id="relatedSection"></div>
 </div>
 
 <script>
+// ────────────────────────────────────────────────
+//                  MAIN SCRIPT
+// ────────────────────────────────────────────────
+
 const JSONBIN_URL = "https://api.jsonbin.io/v3/b/697bae6a43b1c97be9558d79";
 let allMovies = [];
 let uiTimer;
@@ -334,7 +351,6 @@ const movieGrid = document.getElementById('movieGrid');
 const loadingMore = document.getElementById('loadingMore');
 const playerOverlay = document.getElementById('playerOverlay');
 const relatedSection = document.getElementById('relatedSection');
-const relatedGrid = document.getElementById('relatedGrid');
 const mainHeader = document.getElementById('mainHeader');
 const video = document.getElementById('myVideo');
 const playerUI = document.getElementById('playerUI');
@@ -346,24 +362,57 @@ const durTimeEl = document.getElementById('durTime');
 const fsBtn = document.getElementById('fsBtn');
 const videoWrapper = document.getElementById('videoWrapper');
 
-// Particles (সংক্ষিপ্ত করে রাখা)
+// Particles background
 const canvas = document.getElementById('particles-bg');
 const ctx = canvas.getContext('2d');
 let stars = [];
 const STAR_COUNT = 80;
-const GLOW_LAYERS = 20;
 
-class Star { /* ... আগের Star ক্লাস ... */ }
-function initStars() { stars = []; for (let i = 0; i < STAR_COUNT; i++) stars.push(new Star()); }
-function animateStars() { /* ... আগের animateStars ... */ requestAnimationFrame(animateStars); }
-function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initStars(); }
+class Star {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.speed = Math.random() * 0.3 + 0.1;
+  }
+  update() {
+    this.y += this.speed;
+    if (this.y > canvas.height) this.y = 0;
+  }
+  draw() {
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < STAR_COUNT; i++) stars.push(new Star());
+}
+
+function animateStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(star => { star.update(); star.draw(); });
+  requestAnimationFrame(animateStars);
+}
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  initStars();
+}
+
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 animateStars();
 
-// ====================== MAIN LOGIC ======================
+// ────────────────────────────────────────────────
 
-function updateLoadedDisplay() { loadedCountEl.textContent = totalLoaded; }
+function updateLoadedDisplay() {
+  loadedCountEl.textContent = totalLoaded;
+}
 
 function init() {
   movieGrid.innerHTML = Array(12).fill('<div class="card skeleton"></div>').join('');
@@ -378,15 +427,18 @@ async function fetchFromJsonBin() {
     const groups = data.record?.groups || [];
     let moviesList = [];
     groups.forEach(group => {
-      if (group.movies && Array.isArray(group.movies)) moviesList = moviesList.concat(group.movies);
+      if (group.movies && Array.isArray(group.movies)) {
+        moviesList = moviesList.concat(group.movies);
+      }
     });
     allMovies = moviesList.map(m => ({
       name: m.name || "Unknown",
       logo: m.logo || "",
       url: m.url || ""
     })).filter(m => m.url && m.url.startsWith('https://'));
-
-    currentIndex = 0; totalLoaded = 0;
+    
+    currentIndex = 0;
+    totalLoaded = 0;
     movieGrid.innerHTML = '';
     loadingArea.style.display = 'flex';
     updateLoadedDisplay();
@@ -402,6 +454,7 @@ function loadNextBatch() {
   loadingMore.classList.add('active');
   const end = Math.min(currentIndex + BATCH_SIZE, allMovies.length);
   const batch = allMovies.slice(currentIndex, end);
+  
   batch.forEach(movie => {
     const card = document.createElement('div');
     card.className = 'card';
@@ -416,6 +469,7 @@ function loadNextBatch() {
     card.onclick = () => openPlayer(movie);
     movieGrid.appendChild(card);
   });
+  
   totalLoaded += batch.length;
   updateLoadedDisplay();
   currentIndex = end;
@@ -440,36 +494,40 @@ function openPlayer(movie) {
   mainHeader.style.transform = "translateY(-100%)";
   playerOverlay.style.display = 'flex';
   setTimeout(() => playerOverlay.style.opacity = '1', 10);
-
-  // ★★★ পরিবর্তন এখানে ★★★
-  // Play Next / related channels দেখানো বন্ধ
   relatedSection.style.display = 'none';
-  // relatedGrid.innerHTML = '';   // অপশনাল – যদি ক্যাশ ক্লিয়ার করতে চাও
-
   video.play().then(() => updatePlayIcon(true)).catch(() => {});
   window.history.pushState({modal: true}, null, "#watch");
   resetUiTimer();
 }
 
 function closePlayer() {
-  video.pause(); video.src = "";
+  video.pause();
+  video.src = "";
   updatePlayIcon(false);
   playerOverlay.style.opacity = '0';
   setTimeout(() => {
     playerOverlay.style.display = 'none';
     mainHeader.style.transform = "translateY(0)";
   }, 300);
-  if(window.location.hash === "#watch") window.history.back();
+  if (window.location.hash === "#watch") window.history.back();
 }
 
 function togglePlay() {
-  if(video.paused) { video.play(); updatePlayIcon(true); }
-  else { video.pause(); updatePlayIcon(false); }
+  if (video.paused) {
+    video.play();
+    updatePlayIcon(true);
+  } else {
+    video.pause();
+    updatePlayIcon(false);
+  }
 }
-function updatePlayIcon(isPlaying) { playPauseBtn.textContent = isPlaying ? "⏸" : "▶"; }
+
+function updatePlayIcon(isPlaying) {
+  playPauseBtn.textContent = isPlaying ? "⏸" : "▶";
+}
 
 video.addEventListener('timeupdate', () => {
-  if(!video.duration) return;
+  if (!video.duration) return;
   const pct = (video.currentTime / video.duration) * 100;
   progressFill.style.width = `${pct}%`;
   currTimeEl.textContent = formatTime(video.currentTime);
@@ -483,29 +541,75 @@ progressBar.addEventListener('click', e => {
 });
 
 fsBtn.addEventListener('click', () => {
-  if(!document.fullscreenElement) videoWrapper.requestFullscreen();
-  else document.exitFullscreen();
+  if (!document.fullscreenElement) {
+    videoWrapper.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
 });
 
 function formatTime(s) {
   const m = Math.floor(s / 60);
   const sec = Math.floor(s % 60);
-  return `${m}:${sec < 10 ? '0'+sec : sec}`;
+  return `${m}:${sec < 10 ? '0' + sec : sec}`;
 }
 
 function resetUiTimer() {
   playerUI.classList.remove('hidden');
   clearTimeout(uiTimer);
-  uiTimer = setTimeout(() => { if(!video.paused) playerUI.classList.add('hidden'); }, 3500);
+  uiTimer = setTimeout(() => {
+    if (!video.paused) playerUI.classList.add('hidden');
+  }, 3500);
 }
+
+// ────────────────────────────────────────────────
+//                কীবোর্ড কন্ট্রোল (১৫ সেকেন্ড)
+// ────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  // শুধু প্লেয়ার ওপেন থাকলে কাজ করবে
+  if (playerOverlay.style.display !== 'flex') return;
+
+  if (e.key === 'ArrowLeft' || e.key === ',') {
+    // ১৫ সেকেন্ড পিছনে
+    video.currentTime = Math.max(0, video.currentTime - 15);
+    resetUiTimer();
+    e.preventDefault();
+  }
+  else if (e.key === 'ArrowRight' || e.key === '.') {
+    // ১৫ সেকেন্ড এগিয়ে
+    video.currentTime = Math.min(video.duration || Infinity, video.currentTime + 15);
+    resetUiTimer();
+    e.preventDefault();
+  }
+  else if (e.key === ' ' || e.key.toLowerCase() === 'k') {
+    // Play / Pause
+    togglePlay();
+    resetUiTimer();
+    e.preventDefault();
+  }
+  else if (e.key.toLowerCase() === 'm') {
+    // Mute / Unmute
+    video.muted = !video.muted;
+    resetUiTimer();
+    e.preventDefault();
+  }
+});
+
+// ────────────────────────────────────────────────
+//               ইভেন্ট লিসনার
+// ────────────────────────────────────────────────
 
 videoWrapper.addEventListener('mousemove', resetUiTimer);
 videoWrapper.addEventListener('click', e => {
-  if(e.target.closest('.p-controls') || e.target.closest('.p-top')) return;
+  if (e.target.closest('.p-controls') || e.target.closest('.p-top')) return;
   togglePlay();
   resetUiTimer();
 });
-playPauseBtn.addEventListener('click', e => { e.stopPropagation(); togglePlay(); });
+
+playPauseBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  togglePlay();
+});
 
 window.addEventListener('popstate', () => {
   if (playerOverlay.style.display === 'flex') closePlayer();
@@ -515,10 +619,10 @@ document.getElementById('searchInput').addEventListener('input', e => {
   const term = e.target.value.toLowerCase();
   const filtered = allMovies.filter(m => m.name.toLowerCase().includes(term));
   movieGrid.innerHTML = '';
-  currentIndex = 0; totalLoaded = 0;
+  currentIndex = 0;
+  totalLoaded = 0;
   updateLoadedDisplay();
   loadingMore.classList.remove('active');
-  movieGrid.innerHTML = '';
   filtered.forEach(movie => {
     const card = document.createElement('div');
     card.className = 'card';
@@ -535,6 +639,7 @@ document.getElementById('searchInput').addEventListener('input', e => {
   });
 });
 
+// শুরু করা
 init();
 </script>
 </body>
