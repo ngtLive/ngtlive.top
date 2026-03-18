@@ -3,267 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NGT TV - Premium Dashboard</title>
-    <meta name="theme-color" content="#0f0f0f">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>NGT TV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
     <style>
         :root {
-            --primary-color: #8ab4f8;
-            --bg-dark: #0f0f0f;
-            --surface: #1e1e1e;
-            --text-main: #ffffff;
-            --text-dim: #b3b3b3;
-            --sidebar-width: 280px;
-            --header-height: 60px;
-            --accent: #3d5afe;
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --surface: #121212;
+            --border-color: #1f1f1f;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #ffffff;
+            --sidebar-width: 300px;
+            --header-height: 64px;
+            --easing: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow: hidden;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* --- Header Styles --- */
         header {
             height: var(--header-height);
-            background: var(--surface);
+            background: var(--bg-primary);
             display: flex;
             align-items: center;
-            padding: 0 20px;
-            border-bottom: 1px solid #333;
-            z-index: 1000;
-            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 100;
         }
 
-        .menu-btn {
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--primary-color);
+        .nav-trigger {
             background: none;
             border: none;
-            transition: 0.3s;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s ease;
         }
 
-        .brand {
-            font-size: 22px;
-            font-weight: 600;
-            letter-spacing: 1px;
+        .nav-trigger:hover {
+            opacity: 0.7;
         }
 
-        .brand span {
-            color: var(--primary-color);
+        .brand-logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
 
-        /* --- Sidebar Styles --- */
         .sidebar {
             position: fixed;
             top: 0;
-            left: -100%;
+            left: calc(var(--sidebar-width) * -1);
             width: var(--sidebar-width);
             height: 100%;
             background: var(--surface);
-            z-index: 2000;
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
-            padding-top: 20px;
+            z-index: 1000;
+            transition: left 0.3s var(--easing);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
         }
 
         .sidebar.active {
             left: 0;
         }
 
-        .sidebar-header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-            margin-bottom: 20px;
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 900;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .nav-links {
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .nav-menu {
             list-style: none;
+            padding: 80px 0 20px 0;
+            flex-grow: 1;
         }
 
-        .nav-item {
-            padding: 15px 25px;
+        .nav-link {
+            padding: 16px 32px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
             cursor: pointer;
-            transition: 0.3s;
-            color: var(--text-dim);
-            font-weight: 400;
-            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
         }
 
-        .nav-item:hover, .nav-item.active {
-            background: rgba(138, 180, 248, 0.1);
-            color: var(--primary-color);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .nav-item i {
-            width: 25px;
+        .nav-link i {
+            width: 20px;
             font-size: 18px;
+            text-align: center;
         }
 
-        /* --- Main Content --- */
-        #content-area {
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.03);
+            border-left-color: var(--accent);
+        }
+
+        .download-action {
+            padding: 32px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-download {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-download:active {
+            transform: scale(0.97);
+        }
+
+        main {
             flex: 1;
             position: relative;
-            width: 100%;
-            height: calc(100vh - var(--header-height));
+            overflow: hidden;
+            background: #000;
         }
 
         iframe {
             width: 100%;
             height: 100%;
             border: none;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* Overlay */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1500;
-            display: none;
-        }
-
-        .overlay.active {
-            display: block;
-        }
-
-        /* --- PC Optimization --- */
-        @media (min-width: 1024px) {
-            .menu-btn {
-                /* ডেস্কটপেও মেনু হাইড রাখা হয়েছে সুন্দর দেখানোর জন্য, চাইলে সবসময় খোলা রাখা যায় */
-            }
-            
-            #content-area {
-                max-width: 100%;
-                margin: 0 auto;
-            }
-            
-            /* ডেস্কটপে ইফেক্ট আরও স্মুথ করা */
-            .sidebar {
-                width: 320px;
-            }
-        }
-
-        /* Download Section Styling inside Menu */
-        .download-btn {
-            margin-top: 30px;
-            padding: 15px 25px;
-            background: linear-gradient(135deg, #3d5afe, #8ab4f8);
-            color: #000 !important;
-            font-weight: 600 !important;
-            margin: 20px;
-            border-radius: 10px;
-            text-align: center;
-            display: block;
-            text-decoration: none;
+        @media (min-width: 1025px) {
+            .brand-logo { font-size: 22px; }
+            .nav-link { font-size: 16px; padding: 18px 40px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Overlay -->
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar-overlay" id="overlay"></div>
 
-    <!-- Header -->
     <header>
-        <button class="menu-btn" onclick="toggleMenu()">
-            <i class="fas fa-bars"></i>
+        <button class="nav-trigger" id="menuBtn">
+            <i class="fa-solid fa-bars-staggered"></i>
         </button>
-        <div class="brand">NGT <span>PREMIUM</span></div>
-        <div style="width: 24px;"></div> <!-- Spacer -->
+        <div class="brand-logo">NGT TV</div>
     </header>
 
-    <!-- Sidebar Menu -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2 style="color: var(--primary-color);">NGT MENU</h2>
-            <p style="font-size: 12px; color: #666;">Premium Experience</p>
-        </div>
-        
-        <ul class="nav-links">
-            <li class="nav-item active" onclick="loadPage('pcgame.html', this)">
-                <i class="fas fa-gamepad"></i> PC Games
+    <aside class="sidebar" id="sidebar">
+        <ul class="nav-menu">
+            <li>
+                <a class="nav-link active" data-src="pcgame.html">
+                    <i class="fa-solid fa-gamepad"></i> PC Games
+                </a>
             </li>
-            <li class="nav-item" onclick="loadPage('home.html', this)">
-                <i class="fas fa-house"></i> Home
+            <li>
+                <a class="nav-link" data-src="home.html">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
             </li>
-            <li class="nav-item" onclick="loadPage('tv.html', this)">
-                <i class="fas fa-tv"></i> Live TV
+            <li>
+                <a class="nav-link" data-src="tv.html">
+                    <i class="fa-solid fa-tv"></i> Live TV
+                </a>
             </li>
-            <li class="nav-item" onclick="loadPage('movie.html', this)">
-                <i class="fas fa-film"></i> Movies
+            <li>
+                <a class="nav-link" data-src="movie.html">
+                    <i class="fa-solid fa-film"></i> Movies
+                </a>
             </li>
-            <li class="nav-item" onclick="loadPage('18+ADULT.html', this)">
-                <i class="fas fa-user-secret"></i> 18+ Content
+            <li>
+                <a class="nav-link" data-src="18+ADULT.html">
+                    <i class="fa-solid fa-lock"></i> 18+ Vault
+                </a>
             </li>
         </ul>
+        <div class="download-action">
+            <a href="javascript:void(0)" class="btn-download" data-src="download.html">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Download App
+            </a>
+        </div>
+    </aside>
 
-        <a href="#" class="download-btn" onclick="loadPage('download.html', this)">
-            <i class="fas fa-download"></i> Download App
-        </a>
-    </div>
-
-    <!-- Main Content -->
-    <main id="content-area">
-        <!-- Default page set to pcgame.html as requested -->
-        <iframe id="main-frame" src="pcgame.html"></iframe>
+    <main>
+        <iframe id="viewport" src="pcgame.html" allowfullscreen></iframe>
     </main>
 
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const frame = document.getElementById('main-frame');
+        const App = {
+            init() {
+                this.elements = {
+                    menuBtn: document.getElementById('menuBtn'),
+                    sidebar: document.getElementById('sidebar'),
+                    overlay: document.getElementById('overlay'),
+                    viewport: document.getElementById('viewport'),
+                    navLinks: document.querySelectorAll('[data-src]')
+                };
+                this.bindEvents();
+            },
 
-        function toggleMenu() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
+            bindEvents() {
+                this.elements.menuBtn.addEventListener('click', () => this.toggleNav());
+                this.elements.overlay.addEventListener('click', () => this.toggleNav());
+                
+                this.elements.navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => this.handleNavigation(e));
+                });
+            },
 
-        function loadPage(url, element) {
-            // আইফ্রেম সোর্স পরিবর্তন
-            frame.src = url;
+            toggleNav() {
+                this.elements.sidebar.classList.toggle('active');
+                this.elements.overlay.classList.toggle('active');
+            },
 
-            // মেনু আইটেম একটিভ স্টাইল পরিবর্তন
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            if(element.classList.contains('nav-item')) {
-                element.classList.add('active');
+            handleNavigation(e) {
+                const target = e.currentTarget;
+                const source = target.getAttribute('data-src');
+
+                if (source) {
+                    this.elements.viewport.src = source;
+                    
+                    this.elements.navLinks.forEach(el => el.classList.remove('active'));
+                    if (target.classList.contains('nav-link')) {
+                        target.classList.add('active');
+                    }
+                    
+                    this.toggleNav();
+                }
             }
+        };
 
-            // মেনু অটোমেটিক বন্ধ হবে
-            toggleMenu();
-        }
-
-        // পিসি ভিউতে সুন্দর দেখানোর জন্য অতিরিক্ত স্ক্রিপ্ট (ঐচ্ছিক)
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 1024) {
-                // ডেস্কটপ মোডে বিশেষ কিছু চাইলে এখানে করা যাবে
-            }
-        });
+        document.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
