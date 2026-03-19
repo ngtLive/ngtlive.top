@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Games BD - ডাউনলোড</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
+        .card { transition: all 0.3s; }
+        .card:hover { transform:translateY(-8px); box-shadow:0 20px 40px rgba(0,255,150,0.15); }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <header class="bg-black/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-emerald-400">PC Games BD</h1>
+            <div class="relative w-80">
+                <input id="searchInput" oninput="filterGames()" type="text" placeholder="গেমের নাম লিখুন..." class="w-full bg-gray-900 border border-gray-700 rounded-full py-3 px-5 pl-12 focus:outline-none focus:border-emerald-500">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-gray-500"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-12">
+        <h2 class="text-4xl font-bold mb-10 text-center">উপলব্ধ গেমসমূহ</h2>
+        <div id="gamesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+    </main>
+
+    <!-- Modal -->
+    <div id="gameModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+        <div class="bg-gray-900 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-800 flex justify-between items-start">
+                <div>
+                    <h2 id="modalTitle" class="text-3xl font-bold"></h2>
+                    <p id="modalDesc" class="text-gray-400 mt-2"></p>
+                </div>
+                <button onclick="closeModal()" class="text-4xl text-gray-500 hover:text-white">&times;</button>
+            </div>
+            <div class="p-6">
+                <h3 class="text-emerald-400 text-xl mb-4">স্ক্রিনশট</h3>
+                <div id="screenshotsContainer" class="flex gap-4 overflow-x-auto pb-4"></div>
+
+                <h3 class="text-emerald-400 text-xl mt-8 mb-4">ডাউনলোড লিংক</h3>
+                <div id="linksContainer" class="grid gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BIN_ID = '69bb0918aa77b81da9f882b9';
+        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
+
+        let allGames = [];
+
+        async function loadData() {
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('Bin লোড হয়নি');
+                const data = await res.json();
+                const record = data.record;
+
+                if (Array.isArray(record.games)) {
+                    allGames = record.games;
+                } else if (record.title) {
+                    // সিঙ্গেল গেম → অ্যারেতে কনভার্ট
+                    allGames = [record];
+                } else {
+                    allGames = [];
+                }
+
+                renderGames();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('gamesContainer').innerHTML = `<p class="text-red-500 text-center col-span-full">ডাটা লোড করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।</p>`;
+            }
+        }
+
+        function renderGames(filter = '') {
+            const container = document.getElementById('gamesContainer');
+            container.innerHTML = '';
+
+            const filtered = allGames.filter(g => 
+                g.title.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-center col-span-full">কোনো গেম পাওয়া যায়নি</p>';
+                return;
+            }
+
+            filtered.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'card bg-gray-800 rounded-xl overflow-hidden cursor-pointer';
+                card.innerHTML = `
+                    <img src="${game.cover}" alt="${game.title}" class="w-full h-64 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-semibold">${game.title}</h3>
+                        <p class="text-gray-400 text-sm mt-1 line-clamp-2">${game.desc || 'বর্ণনা নেই'}</p>
+                    </div>
+                `;
+                card.onclick = () => openModal(game);
+                container.appendChild(card);
+            });
+        }
+
+        function openModal(game) {
+            document.getElementById('modalTitle').textContent = game.title;
+            document.getElementById('modalDesc').textContent = game.desc || 'কোনো বর্ণনা নেই';
+
+            const ssContainer = document.getElementById('screenshotsContainer');
+            ssContainer.innerHTML = '';
+            (game.screenshots || []).forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'w-80 h-48 object-cover rounded-lg flex-shrink-0';
+                ssContainer.appendChild(img);
+            });
+
+            const linksContainer = document.getElementById('linksContainer');
+            linksContainer.innerHTML = '';
+            (game.links || []).forEach(link => {
+                const a = document.createElement('a');
+                a.href = link.url;
+                a.target = '_blank';
+                a.className = 'block bg-gray-800 hover:bg-emerald-900/40 p-5 rounded-xl flex justify-between items-center';
+                a.innerHTML = `
+                    <span class="font-medium">${link.name}</span>
+                    <i class="fa-solid fa-download text-emerald-400"></i>
+                `;
+                linksContainer.appendChild(a);
+            });
+
+            document.getElementById('gameModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('gameModal').classList.add('hidden');
+        }
+
+        function filterGames() {
+            const term = document.getElementById('searchInput').value;
+            renderGames(term);
+        }
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>
