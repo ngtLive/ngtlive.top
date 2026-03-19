@@ -1,318 +1,166 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NGT Admin Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style>
-:root{--primary:#8ab4f8;--bg:#0f1115;--surface:#1d2025;--border:#2f343b;--text:#e8eaed;--danger:#f44336;--success:#4caf50;--warning:#ff9800}*{margin:0;padding:0;box-sizing:border-box;font-family:'Roboto',sans-serif}body{background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column}header{background:var(--surface);padding:0 20px;height:70px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);box-shadow:0 4px 10px rgba(0,0,0,0.3)}.logo{font-size:22px;font-weight:700}.logo span{color:var(--primary)}.container{flex:1;padding:20px;overflow-y:auto;max-width:1200px;width:100%;margin:0 auto}.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-bottom:30px}.stat-card{background:var(--surface);padding:25px;border-radius:12px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}.stat-info h3{font-size:32px;margin-bottom:5px}.stat-info p{color:#9aa0a6;font-size:14px}.stat-icon{font-size:30px;color:var(--primary);background:rgba(138,180,248,0.1);width:60px;height:60px;border-radius:12px;display:flex;align-items:center;justify-content:center}.panel-section{background:var(--surface);border-radius:16px;border:1px solid var(--border);overflow:hidden}.panel-head{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}.panel-head h2{font-size:18px}.search-group{display:flex;gap:8px;flex:1;min-width:250px;max-width:400px}.search-input{flex:1;background:#0f1115;border:1px solid var(--border);padding:12px 16px;border-radius:8px;color:#fff;outline:none;font-size:14px}.search-input:focus{border-color:var(--primary)}.search-btn{background:var(--primary);color:#000;border:none;padding:0 16px;border-radius:8px;font-weight:600;cursor:pointer;display:flex;align-items:center}.search-btn:hover{background:#7aa8f5}.add-btn{background:var(--primary);color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap}.table-responsive{overflow-x:auto}.user-table{width:100%;border-collapse:collapse}.user-table th{background:#252930;text-align:left;padding:15px;font-size:13px;color:#9aa0a6;font-weight:500}.user-table td{padding:15px;border-bottom:1px solid var(--border);font-size:14px}.status-dot{height:10px;width:10px;border-radius:50%;display:inline-block;margin-right:5px}.status-active{background:var(--success)}.status-banned{background:var(--danger)}.action-btn{border:none;background:rgba(255,255,255,0.05);color:var(--text);width:32px;height:32px;border-radius:6px;cursor:pointer;margin-right:5px;transition:.2s}.action-btn:hover{background:rgba(255,255,255,0.1)}.btn-ban{color:var(--danger)}.btn-ban:hover{background:rgba(244,67,54,0.1)}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px)}.modal{background:var(--surface);width:90%;max-width:420px;border-radius:16px;border:1px solid var(--border);padding:30px}.modal-title{font-size:20px;margin-bottom:20px}.form-group{margin-bottom:20px}.form-group label{display:block;color:#9aa0a6;font-size:13px;margin-bottom:8px}.form-group input{width:100%;background:#0f1115;border:1px solid var(--border);padding:12px;border-radius:8px;color:#fff;outline:none;font-family:monospace}.form-group input:focus{border-color:var(--primary)}.modal-actions{display:flex;justify-content:flex-end;gap:10px}.btn-cancel{background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:8px;cursor:pointer}.btn-save{background:var(--primary);color:#000;border:none;padding:10px 25px;border-radius:8px;font-weight:600;cursor:pointer}#auth-wall{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;flex-direction:column;align-items:center;justify-content:center}.wall-box{background:var(--surface);padding:40px;border-radius:16px;text-align:center;border:1px solid var(--border)}.wall-input{background:#000;border:1px solid var(--border);padding:12px;color:#fff;border-radius:8px;margin-top:20px;width:250px;text-align:center;font-size:16px}
-.expired{color:var(--danger);text-decoration:line-through;font-weight:500}.no-expiry{color:#9aa0a6;font-style:italic}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - PC Games BD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background:#0a0a0a; color:white; font-family:system-ui, sans-serif; }
+    </style>
 </head>
-<body>
-<div id="auth-wall">
-<div class="wall-box">
-<h2 class="logo" style="margin-bottom:10px">ADMIN <span>PANEL</span></h2>
-<p style="color:#9aa0a6;font-size:14px">Restricted Area</p>
-<input type="password" id="admin-pin" class="wall-input" placeholder="Enter Access PIN">
-<button onclick="checkAdmin()" class="add-btn" style="width:100%;justify-content:center;margin-top:15px">Unlock</button>
-</div>
-</div>
-<header>
-<div class="logo">NGT <span>CPANEL</span></div>
-<button onclick="location.reload()" class="action-btn"><i class="fas fa-power-off"></i></button>
-</header>
-<div class="container">
-<div class="stats-grid">
-<div class="stat-card">
-<div class="stat-info"><h3 id="total-users">0</h3><p>Total Users</p></div>
-<div class="stat-icon"><i class="fas fa-users"></i></div>
-</div>
-<div class="stat-card">
-<div class="stat-info"><h3 id="active-users">0</h3><p>Active Now</p></div>
-<div class="stat-icon" style="color:var(--success);background:rgba(76,175,80,0.1)"><i class="fas fa-check-circle"></i></div>
-</div>
-</div>
+<body class="p-6 md:p-12">
 
-<div class="panel-section">
-<div class="panel-head">
-<h2>User Management</h2>
-<div class="search-group">
-<input type="text" id="search-input" class="search-input" placeholder="Username লিখুন..." autocomplete="off">
-<button class="search-btn" onclick="performSearch()"><i class="fas fa-search"></i></button>
-</div>
-<button class="add-btn" onclick="openAddModal()"><i class="fas fa-plus"></i> Add User</button>
-</div>
-<div class="table-responsive">
-<table class="user-table">
-<thead>
-<tr>
-<th>Username</th>
-<th>Password</th>
-<th>Status</th>
-<th>Expire Date</th>
-<th>Created</th>
-<th>Action</th>
-</tr>
-</thead>
-<tbody id="user-list"></tbody>
-</table>
-</div>
-</div>
-</div>
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-4xl font-bold text-emerald-400 mb-10">অ্যাডমিন প্যানেল</h1>
 
-<!-- Add User Modal -->
-<div class="modal-overlay" id="add-modal">
-<div class="modal">
-<h3 class="modal-title">Create New User</h3>
-<form id="add-form">
-<div class="form-group">
-<label>Username (ID)</label>
-<input type="text" id="new-user" required autocomplete="off" placeholder="Enter unique username">
-</div>
-<div class="form-group">
-<label>Password</label>
-<input type="text" id="new-pass" required autocomplete="off" placeholder="Enter password for the user">
-</div>
-<div class="form-group">
-<label>Expire Date (optional - leave empty for no expiry)</label>
-<input type="date" id="new-expire">
-</div>
-<div class="modal-actions">
-<button type="button" class="btn-cancel" onclick="closeAddModal()">Cancel</button>
-<button type="submit" class="btn-save">Create User</button>
-</div>
-</form>
-</div>
-</div>
+        <div class="bg-gray-900 p-8 rounded-2xl mb-12">
+            <h2 class="text-2xl mb-6">নতুন গেম যোগ করুন</h2>
 
-<!-- Edit User Modal -->
-<div class="modal-overlay" id="edit-modal">
-<div class="modal">
-<h3 class="modal-title">Edit User</h3>
-<form id="edit-form">
-<input type="hidden" id="edit-key">
-<div class="form-group">
-<label>Username (ID)</label>
-<input type="text" id="edit-user" readonly>
-</div>
-<div class="form-group">
-<label>New Password (leave empty to keep current)</label>
-<input type="text" id="edit-pass" autocomplete="off" placeholder="Leave blank to keep same password">
-</div>
-<div class="form-group">
-<label>Expire Date (leave empty to remove expiry)</label>
-<input type="date" id="edit-expire">
-</div>
-<div class="modal-actions">
-<button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
-<button type="submit" class="btn-save">Save Changes</button>
-</div>
-</form>
-</div>
-</div>
+            <input id="title" placeholder="গেমের নাম *" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+            <input id="about" placeholder="About" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
 
-const firebaseConfig = {
-    apiKey: "AIzaSyD_HBGuQSh_GzqrHqHbgdaoBikLZsK3Qqs",
-    authDomain: "new-all-f99f7.firebaseapp.com",
-    databaseURL: "https://new-all-f99f7-default-rtdb.firebaseio.com",
-    projectId: "new-all-f99f7",
-    storageBucket: "new-all-f99f7.firebasestorage.app",
-    messagingSenderId: "1069748173900",
-    appId: "1:1069748173900:web:158d6336c0f4628133c8e9",
-    measurementId: "G-V6DZ37WSBF"
-};
+            <input id="cover" placeholder="কভার ছবির URL *" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+            <div class="mb-6">
+                <label class="block mb-2">স্ক্রিনশট URL</label>
+                <textarea id="screenshots" rows="4" class="w-full p-4 bg-gray-800 border border-gray-700 rounded-xl"></textarea>
+            </div>
 
-const ADMIN_PIN = "Ghost620";
+            <textarea id="desc" placeholder="Description" rows="3" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl"></textarea>
 
-let allUsers = [];
+            <!-- NEW UPLOADER INFO BOX -->
+            <input id="uploader" placeholder="Uploader Info (যিনি আপলোড করেছেন)" class="w-full p-4 mb-6 bg-gray-800 border border-gray-700 rounded-xl">
 
-window.checkAdmin = function() {
-    const p = document.getElementById('admin-pin').value;
-    if (p === ADMIN_PIN) {
-        document.getElementById('auth-wall').style.display = 'none';
-        loadUsers();
-    } else {
-        alert("Wrong PIN!");
-    }
-};
+            <div class="mb-8">
+                <label class="block mb-2">ডাউনলোড লিংক</label>
+                <textarea id="links" rows="5" class="w-full p-4 bg-gray-800 border border-gray-700 rounded-xl"></textarea>
+            </div>
 
-function loadUsers() {
-    const uRef = ref(db, 'users');
-    onValue(uRef, (snap) => {
-        allUsers = [];
-        snap.forEach((child) => {
-            const k = child.key;
-            const v = child.val();
-            allUsers.push({ key: k, ...v });
-        });
+            <button id="saveBtn" onclick="saveGame()" class="bg-emerald-600 px-10 py-4 rounded-xl font-bold">গেম যোগ করুন</button>
+            <button id="updateBtn" onclick="updateGame()" class="bg-blue-600 px-10 py-4 rounded-xl font-bold hidden">Save Edit</button>
+        </div>
 
-        renderUsers(allUsers);
+        <h2 class="text-2xl mb-6">বর্তমান গেমসমূহ</h2>
+        <div id="gameList" class="space-y-6"></div>
+    </div>
 
-        document.getElementById('total-users').innerText = allUsers.length;
-        document.getElementById('active-users').innerText = allUsers.filter(u => u.status !== 'banned').length;
-    });
-}
+    <script>
+        const BIN_ID = '69bb0918aa77b81da9f882b9';
+        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
-function renderUsers(usersArray) {
-    const list = document.getElementById('user-list');
-    list.innerHTML = '';
+        let games = [];
+        let editIndex = -1;
 
-    usersArray.forEach((user) => {
-        const { key, username, password, status, expire, created } = user;
-
-        let expireDisplay = 'No Expiry';
-        let expireClass = 'no-expiry';
-        if (expire) {
-            const expDate = new Date(expire);
-            expireDisplay = expDate.toLocaleDateString();
-            expireClass = Date.now() > expire ? 'expired' : '';
+        async function loadGames() {
+            const res = await fetch(API_URL + '/latest');
+            const data = await res.json();
+            games = data.record.games || [];
+            renderList();
         }
 
-        const isBanned = status === 'banned';
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td style="font-weight:700;color:#fff">${username}</td>
-            <td style="font-family:monospace;color:var(--primary)">${password}</td>
-            <td><span class="status-dot ${isBanned ? 'status-banned' : 'status-active'}"></span>${isBanned ? 'Banned' : 'Active'}</td>
-            <td class="${expireClass}">${expireDisplay}</td>
-            <td style="color:#666">${new Date(created).toLocaleDateString()}</td>
-            <td>
-                <button class="action-btn" onclick="openEditModal('${key}')" title="Edit"><i class="fas fa-edit"></i></button>
-                <button class="action-btn btn-ban" onclick="toggleBan('${key}','${status}')" title="${isBanned ? 'Unban' : 'Ban'}"><i class="fas ${isBanned ? 'fa-unlock' : 'fa-ban'}"></i></button>
-                <button class="action-btn" onclick="delUser('${key}')" style="color:#f44336" title="Delete"><i class="fas fa-trash"></i></button>
-            </td>
-        `;
-        list.appendChild(row);
-    });
-}
+        function renderList() {
+            const container = document.getElementById('gameList');
+            container.innerHTML = '';
 
-function performSearch() {
-    const term = document.getElementById('search-input').value.trim().toLowerCase();
-
-    if (!term) {
-        renderUsers(allUsers);
-        return;
-    }
-
-    const filtered = allUsers.filter(user =>
-        user.username.toLowerCase().includes(term)
-    );
-
-    // Alphabetical sort
-    filtered.sort((a, b) => a.username.localeCompare(b.username));
-
-    renderUsers(filtered);
-}
-
-// Enter key press-এও সার্চ হবে
-document.getElementById('search-input').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        performSearch();
-    }
-});
-
-window.toggleBan = function(k, s) {
-    const n = s === 'banned' ? 'active' : 'banned';
-    update(ref(db, 'users/' + k), { status: n });
-};
-
-window.delUser = function(k) {
-    if (confirm("Delete this user permanently?")) {
-        remove(ref(db, 'users/' + k));
-    }
-};
-
-window.openAddModal = () => {
-    document.getElementById('add-modal').style.display = 'flex';
-    document.getElementById('add-form').reset();
-};
-
-window.closeAddModal = () => document.getElementById('add-modal').style.display = 'none';
-
-document.getElementById('add-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const u = document.getElementById('new-user').value.trim();
-    const p = document.getElementById('new-pass').value.trim();
-    const expireInput = document.getElementById('new-expire').value;
-
-    if (!u || !p) {
-        alert("Username and Password are required!");
-        return;
-    }
-
-    const data = {
-        username: u,
-        password: p,
-        status: 'active',
-        created: Date.now()
-    };
-
-    if (expireInput) {
-        data.expire = new Date(expireInput).getTime();
-    }
-
-    const newRef = push(ref(db, 'users'));
-    set(newRef, data);
-    closeAddModal();
-});
-
-window.openEditModal = function(key) {
-    const userRef = ref(db, 'users/' + key);
-    onValue(userRef, (snap) => {
-        if (!snap.exists()) return;
-        const v = snap.val();
-
-        document.getElementById('edit-key').value = key;
-        document.getElementById('edit-user').value = v.username;
-        document.getElementById('edit-pass').value = '';
-
-        const expireInput = document.getElementById('edit-expire');
-        if (v.expire) {
-            const d = new Date(v.expire);
-            expireInput.value = d.toISOString().split('T')[0];
-        } else {
-            expireInput.value = '';
+            games.forEach((game, index) => {
+                const item = document.createElement('div');
+                item.className = 'bg-gray-900 p-6 rounded-xl flex justify-between items-start';
+                item.innerHTML = `
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold">${game.title}</h3>
+                        <p class="text-sm text-gray-400">${game.about || ''}</p>
+                        <p class="text-sm text-gray-500">${game.desc || ''}</p>
+                        <p class="text-xs text-emerald-400 mt-2">Uploaded by: ${game.uploader || 'Unknown'}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editGame(${index})" class="bg-blue-600 px-4 py-2 rounded">Edit</button>
+                        <button onclick="deleteGame(${index})" class="bg-red-600 px-4 py-2 rounded">মুছে ফেলুন</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
         }
 
-        document.getElementById('edit-modal').style.display = 'flex';
-    }, { onlyOnce: true });
-};
+        async function saveToBin() {
+            await fetch(API_URL, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ games })
+            });
+            loadGames();
+        }
 
-window.closeEditModal = () => document.getElementById('edit-modal').style.display = 'none';
+        function saveGame() {
+            const game = getFormData();
+            games.push(game);
+            saveToBin();
+            clearForm();
+        }
 
-document.getElementById('edit-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const key = document.getElementById('edit-key').value;
-    const pass = document.getElementById('edit-pass').value.trim();
-    const expireInput = document.getElementById('edit-expire').value;
+        function editGame(index) {
+            const g = games[index];
+            document.getElementById('title').value = g.title;
+            document.getElementById('about').value = g.about || '';
+            document.getElementById('cover').value = g.cover;
+            document.getElementById('desc').value = g.desc || '';
+            document.getElementById('uploader').value = g.uploader || '';
 
-    const updates = {};
+            document.getElementById('screenshots').value = (g.screenshots || []).join('\n');
+            document.getElementById('links').value = (g.links || []).map(l => `${l.name} | ${l.url}`).join('\n');
 
-    if (pass) updates.password = pass;
+            editIndex = index;
 
-    if (expireInput) {
-        updates.expire = new Date(expireInput).getTime();
-    } else if (expireInput === '') {
-        updates.expire = null;
-    }
+            document.getElementById('saveBtn').classList.add('hidden');
+            document.getElementById('updateBtn').classList.remove('hidden');
+        }
 
-    if (Object.keys(updates).length > 0) {
-        update(ref(db, 'users/' + key), updates);
-    }
+        function updateGame() {
+            const game = getFormData();
+            games[editIndex] = game;
+            editIndex = -1;
 
-    closeEditModal();
-});
+            saveToBin();
+            clearForm();
 
-</script>
+            document.getElementById('saveBtn').classList.remove('hidden');
+            document.getElementById('updateBtn').classList.add('hidden');
+        }
+
+        function deleteGame(index) {
+            if (!confirm('ডিলিট করবেন?')) return;
+            games.splice(index, 1);
+            saveToBin();
+        }
+
+        function getFormData() {
+            return {
+                title: document.getElementById('title').value,
+                about: document.getElementById('about').value,
+                cover: document.getElementById('cover').value,
+                desc: document.getElementById('desc').value,
+                uploader: document.getElementById('uploader').value,
+                screenshots: document.getElementById('screenshots').value.split('\n').filter(Boolean),
+                links: document.getElementById('links').value.split('\n').map(l => {
+                    const p = l.split('|');
+                    return p.length >= 2 ? { name: p[0].trim(), url: p[1].trim() } : null;
+                }).filter(Boolean)
+            };
+        }
+
+        function clearForm() {
+            document.getElementById('title').value = '';
+            document.getElementById('about').value = '';
+            document.getElementById('cover').value = '';
+            document.getElementById('desc').value = '';
+            document.getElementById('uploader').value = '';
+            document.getElementById('screenshots').value = '';
+            document.getElementById('links').value = '';
+        }
+
+        window.onload = loadGames;
+    </script>
 </body>
 </html>
