@@ -1,163 +1,273 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PC Games BD - ডাউনলোড</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
-        .card { transition: all 0.3s; }
-        .card:hover { transform:translateY(-8px); box-shadow:0 20px 40px rgba(0,255,150,0.15); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PC Games BD - ডাউনলোড</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
+
+.card { transition: all 0.3s; }
+.card:hover { transform:translateY(-8px); box-shadow:0 20px 40px rgba(0,255,150,0.15); }
+
+/* 🔥 Screenshot scroll */
+#screenshotsContainer {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    cursor: grab;
+}
+#screenshotsContainer::-webkit-scrollbar { display: none; }
+
+.screenshot {
+    width: 320px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+/* 🔥 Preview */
+#previewBox {
+    position: fixed;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+    width: 650px;
+    height: 380px;
+    background: #111;
+    border-radius: 16px;
+    overflow: hidden;
+    display: none;
+    z-index: 9999;
+    box-shadow: 0 0 60px rgba(0,0,0,0.9);
+}
+
+#previewBox.show {
+    display: block;
+}
+
+#previewImg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: grab;
+}
+
+/* modal shadow */
+.modal-box {
+    box-shadow: 0 0 60px rgba(0,0,0,0.9),
+                0 0 120px rgba(0,255,150,0.1);
+}
+</style>
 </head>
+
 <body class="min-h-screen">
 
-    <header class="bg-black/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-800">
-        <div class="w-full px-2 py-5 flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-emerald-400">Gʜ👻ꜱᴛ _ Games</h1>
-            <div class="relative w-80">
-                <input id="searchInput" oninput="filterGames()" type="text" placeholder="গেমের নাম লিখুন..." class="w-full bg-gray-900 border border-gray-700 rounded-full py-3 px-5 pl-12 focus:outline-none focus:border-emerald-500">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-gray-500"></i>
-            </div>
+<header class="bg-black/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-800">
+<div class="w-full px-2 py-5 flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-emerald-400">Gʜ👻ꜱᴛ _ Games</h1>
+
+    <div class="relative w-80">
+        <input id="searchInput" oninput="filterGames()" type="text"
+        placeholder="গেমের নাম লিখুন..."
+        class="w-full bg-gray-900 border border-gray-700 rounded-full py-3 px-5 pl-12 focus:outline-none focus:border-emerald-500">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-gray-500"></i>
+    </div>
+</div>
+</header>
+
+<main class="w-full px-2 py-12">
+<div id="gamesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+</main>
+
+<!-- 🔥 Preview -->
+<div id="previewBox">
+    <img id="previewImg" src="">
+</div>
+
+<!-- Modal -->
+<div id="gameModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+
+<div class="modal-box bg-gray-900 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+
+    <div class="p-6 border-b border-gray-800 flex justify-between items-start">
+        <div>
+            <h2 id="modalTitle" class="text-3xl font-bold"></h2>
+
+            <p class="text-emerald-400 text-sm mt-2">About:</p>
+            <p id="modalAbout" class="text-gray-400"></p>
         </div>
-    </header>
-
- <main class="w-full px-2 py-12">
-        <div id="gamesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
-    </main>
-
-    <!-- Modal -->
-    <div id="gameModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-        <div class="bg-gray-900 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-800 flex justify-between items-start">
-                <div>
-                    <h2 id="modalTitle" class="text-3xl font-bold"></h2>
-
-                    <p class="text-emerald-400 text-sm mt-2">About:</p>
-                    <p id="modalAbout" class="text-gray-400"></p>
-                </div>
-                <button onclick="closeModal()" class="text-4xl text-gray-500 hover:text-white">&times;</button>
-            </div>
-            <div class="p-6">
-                <h3 class="text-emerald-400 text-xl mb-4">Screenshot</h3>
-                <div id="screenshotsContainer" class="flex gap-4 overflow-x-auto pb-4"></div>
-
-                <p class="text-emerald-400 text-sm mt-4">Description:</p>
-                <p id="modalDesc" class="text-gray-400"></p>
-
-                <!-- NEW UPLOADER INFO (RED COLOR) -->
-                <p class="text-lime-300 text-sm mt-4">Uploader Info:</p>
-                <p id="modalUploader" class="text-pink-500"></p>
-
-                <h3 class="text-emerald-400 text-xl mt-8 mb-4">Download link</h3>
-                <div id="linksContainer" class="grid gap-4"></div>
-            </div>
-        </div>
+        <button onclick="closeModal()" class="text-4xl text-gray-500 hover:text-white">&times;</button>
     </div>
 
-    <script>
-        const BIN_ID = '69bb0918aa77b81da9f882b9';
-        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
+    <div class="p-6">
+        <h3 class="text-emerald-400 text-xl mb-4">Screenshot</h3>
 
-        let allGames = [];
+        <div id="screenshotsContainer"></div>
 
-        async function loadData() {
-            try {
-                const res = await fetch(API_URL);
-                if (!res.ok) throw new Error('Bin লোড হয়নি');
-                const data = await res.json();
-                const record = data.record;
+        <p class="text-emerald-400 text-sm mt-4">Description:</p>
+        <p id="modalDesc" class="text-gray-400"></p>
 
-                if (Array.isArray(record.games)) {
-                    allGames = record.games;
-                } else if (record.title) {
-                    allGames = [record];
-                } else {
-                    allGames = [];
-                }
+        <p class="text-lime-300 text-sm mt-4">Uploader Info:</p>
+        <p class="text-lime-500 text-sm mt-4">☆☆☆☆☆☆☆☆☆☆</p>
+        <p id="modalUploader" class="text-pink-500"></p>
 
-                renderGames();
-            } catch (err) {
-                console.error(err);
-                document.getElementById('gamesContainer').innerHTML = `<p class="text-red-500 text-center col-span-full">ডাটা লোড করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।</p>`;
-            }
+        <h3 class="text-emerald-400 text-xl mt-8 mb-4">Download link</h3>
+        <div id="linksContainer" class="grid gap-4"></div>
+    </div>
+
+</div>
+</div>
+
+<script>
+const BIN_ID = '69bb0918aa77b81da9f882b9';
+const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
+
+let allGames = [];
+
+/* 🔥 Drag Scroll */
+let isDown = false, startX, scrollLeft;
+
+document.addEventListener("mousedown", (e)=>{
+    const slider = document.getElementById('screenshotsContainer');
+    if(e.target.closest("#screenshotsContainer")){
+        isDown = true;
+        slider.style.cursor = "grabbing";
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    }
+});
+
+document.addEventListener("mouseup", ()=>{
+    isDown = false;
+    document.getElementById('screenshotsContainer').style.cursor = "grab";
+});
+
+document.addEventListener("mousemove", (e)=>{
+    if(!isDown) return;
+    const slider = document.getElementById('screenshotsContainer');
+    e.preventDefault();
+    const x = e.pageX - slider.offsetLeft;
+    const walk = (x - startX) * 2;
+    slider.scrollLeft = scrollLeft - walk;
+});
+
+/* 🔥 Preview drag */
+let isDragging = false, offsetX, offsetY;
+
+const previewBox = document.getElementById("previewBox");
+
+previewBox.addEventListener("mousedown", (e)=>{
+    isDragging = true;
+    offsetX = e.clientX - previewBox.offsetLeft;
+    offsetY = e.clientY - previewBox.offsetTop;
+});
+
+document.addEventListener("mouseup", ()=> isDragging = false);
+
+document.addEventListener("mousemove", (e)=>{
+    if(!isDragging) return;
+    previewBox.style.left = (e.clientX - offsetX) + "px";
+    previewBox.style.top = (e.clientY - offsetY) + "px";
+});
+
+/* 🔥 Hover Fix */
+let hoveringImage = false;
+
+function showPreview(src){
+    hoveringImage = true;
+    document.getElementById("previewImg").src = src;
+    previewBox.classList.add("show");
+}
+
+function hidePreview(){
+    hoveringImage = false;
+    setTimeout(()=>{
+        if(!previewBox.matches(":hover") && !hoveringImage){
+            previewBox.classList.remove("show");
         }
+    },100);
+}
 
-        function renderGames(filter = '') {
-            const container = document.getElementById('gamesContainer');
-            container.innerHTML = '';
+previewBox.addEventListener("mouseleave", ()=>{
+    if(!hoveringImage){
+        previewBox.classList.remove("show");
+    }
+});
 
-            const filtered = allGames.filter(g => 
-                g.title.toLowerCase().includes(filter.toLowerCase())
-            );
+/* 🔥 Data */
+async function loadData() {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    const record = data.record;
+    allGames = Array.isArray(record.games) ? record.games : [record];
+    renderGames();
+}
 
-            if (filtered.length === 0) {
-                container.innerHTML = '<p class="text-gray-400 text-center col-span-full">কোনো গেম পাওয়া যায়নি</p>';
-                return;
-            }
+function renderGames(filter = '') {
+    const container = document.getElementById('gamesContainer');
+    container.innerHTML = '';
 
-            filtered.forEach(game => {
-                const card = document.createElement('div');
-                card.className = 'card bg-gray-800 rounded-xl overflow-hidden cursor-pointer';
-                card.innerHTML = `
-                    <img src="${game.cover}" alt="${game.title}" class="w-full h-64 object-cover">
-                    <div class="p-5">
-                        <h3 class="text-xl font-semibold">${game.title}</h3>
+    const filtered = allGames.filter(g => 
+        g.title.toLowerCase().includes(filter.toLowerCase())
+    );
 
-                        <p class="text-emerald-400 text-xs mt-2">About:</p>
-                        <p class="text-gray-400 text-sm line-clamp-2">${game.about || ''}</p>
-                    </div>
-                `;
-                card.onclick = () => openModal(game);
-                container.appendChild(card);
-            });
-        }
+    filtered.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'card bg-gray-800 rounded-xl overflow-hidden cursor-pointer';
+        card.innerHTML = `
+            <img src="${game.cover}" class="w-full h-64 object-cover">
+            <div class="p-5">
+                <h3 class="text-xl font-semibold">${game.title}</h3>
+                <p class="text-emerald-400 text-xs mt-2">About:</p>
+                <p class="text-gray-400 text-sm line-clamp-2">${game.about || ''}</p>
+            </div>
+        `;
+        card.onclick = () => openModal(game);
+        container.appendChild(card);
+    });
+}
 
-        function openModal(game) {
-            document.getElementById('modalTitle').textContent = game.title;
-            document.getElementById('modalAbout').textContent = game.about || '';
+function openModal(game) {
+    document.getElementById('modalTitle').textContent = game.title;
+    document.getElementById('modalAbout').textContent = game.about || '';
+    document.getElementById('modalDesc').textContent = game.desc || '';
+    document.getElementById('modalUploader').textContent = game.uploader || '';
 
-            document.getElementById('modalDesc').textContent = game.desc || 'কোনো বর্ণনা নেই';
-            document.getElementById('modalUploader').textContent = game.uploader || 'Unknown';
+    const ss = document.getElementById('screenshotsContainer');
+    ss.innerHTML = '';
 
-            const ssContainer = document.getElementById('screenshotsContainer');
-            ssContainer.innerHTML = '';
-            (game.screenshots || []).forEach(src => {
-                const img = document.createElement('img');
-                img.src = src;
-                img.className = 'w-80 h-48 object-cover rounded-lg flex-shrink-0';
-                ssContainer.appendChild(img);
-            });
+    game.screenshots.forEach(src=>{
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'screenshot';
 
-            const linksContainer = document.getElementById('linksContainer');
-            linksContainer.innerHTML = '';
-            (game.links || []).forEach(link => {
-                const a = document.createElement('a');
-                a.href = link.url;
-                a.target = '_blank';
-                a.className = 'block bg-gray-800 hover:bg-emerald-900/40 p-5 rounded-xl flex justify-between items-center';
-                a.innerHTML = `
-                    <span class="font-medium">${link.name}</span>
-                    <i class="fa-solid fa-download text-emerald-400"></i>
-                `;
-                linksContainer.appendChild(a);
-            });
+        img.onmouseenter = ()=> showPreview(src);
+        img.onmouseleave = hidePreview;
 
-            document.getElementById('gameModal').classList.remove('hidden');
-        }
+        ss.appendChild(img);
+    });
 
-        function closeModal() {
-            document.getElementById('gameModal').classList.add('hidden');
-        }
+    document.getElementById('gameModal').classList.remove('hidden');
+}
 
-        function filterGames() {
-            const term = document.getElementById('searchInput').value;
-            renderGames(term);
-        }
+function closeModal(){
+    document.getElementById('gameModal').classList.add('hidden');
+    previewBox.classList.remove('show');
+}
 
-        window.onload = loadData;
-    </script>
+function filterGames(){
+    renderGames(document.getElementById('searchInput').value);
+}
+
+window.onload = loadData;
+</script>
+
 </body>
 </html>
