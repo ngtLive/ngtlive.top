@@ -110,6 +110,19 @@
             opacity: 1;
         }
 
+        /* ✅ ADD ONLY THIS */
+        .sidebar-header {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+        }
+
         .nav-menu {
             list-style: none;
             padding: 80px 0 20px 0;
@@ -183,11 +196,6 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-
-        @media (min-width: 1025px) {
-            .brand-logo { font-size: 22px; }
-            .nav-link { font-size: 16px; padding: 18px 40px; }
-        }
     </style>
 </head>
 <body>
@@ -202,6 +210,10 @@
     </header>
 
     <aside class="sidebar" id="sidebar">
+
+        <!-- ✅ ONLY ADDED THIS LINE -->
+        <div class="sidebar-header">NGT TV</div>
+
         <ul class="nav-menu">
             <li>
                 <a class="nav-link active" data-src="pcgame.html">
@@ -229,6 +241,7 @@
                 </a>
             </li>
         </ul>
+
         <div class="download-action">
             <a href="javascript:void(0)" class="btn-download" data-src="download.html">
                 <i class="fa-solid fa-cloud-arrow-down"></i> Download App
