@@ -14,15 +14,16 @@ body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
 .card { transition: all 0.3s; }
 .card:hover { transform:translateY(-8px); box-shadow:0 20px 40px rgba(0,255,150,0.15); }
 
-/* 🔥 Screenshot scroll */
+/* 🔥 Scroll hidden */
 #screenshotsContainer {
     display: flex;
     gap: 16px;
     overflow-x: auto;
-    cursor: grab;
+    scroll-behavior: smooth;
 }
 #screenshotsContainer::-webkit-scrollbar { display: none; }
 
+/* screenshot */
 .screenshot {
     width: 320px;
     height: 200px;
@@ -32,31 +33,26 @@ body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
     cursor: pointer;
 }
 
-/* 🔥 Preview */
+/* 🔥 Right side popup */
 #previewBox {
     position: fixed;
     top: 50%;
-    right: 40px;
+    right: 30px;
     transform: translateY(-50%);
-    width: 650px;
-    height: 380px;
+    width: 500px;
+    height: 300px;
     background: #111;
     border-radius: 16px;
     overflow: hidden;
     display: none;
     z-index: 9999;
-    box-shadow: 0 0 60px rgba(0,0,0,0.9);
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
 }
 
-#previewBox.show {
-    display: block;
-}
-
-#previewImg {
+#previewBox img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    cursor: grab;
+    object-fit: cover;
 }
 
 /* modal shadow */
@@ -86,7 +82,7 @@ body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
 <div id="gamesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
 </main>
 
-<!-- 🔥 Preview -->
+<!-- 🔥 Preview Popup -->
 <div id="previewBox">
     <img id="previewImg" src="">
 </div>
@@ -115,7 +111,6 @@ body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
         <p id="modalDesc" class="text-gray-400"></p>
 
         <p class="text-lime-300 text-sm mt-4">Uploader Info:</p>
-        <p class="text-lime-500 text-sm mt-4">☆☆☆☆☆☆☆☆☆☆</p>
         <p id="modalUploader" class="text-pink-500"></p>
 
         <h3 class="text-emerald-400 text-xl mt-8 mb-4">Download link</h3>
@@ -131,77 +126,6 @@ const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}/latest`;
 
 let allGames = [];
 
-/* 🔥 Drag Scroll */
-let isDown = false, startX, scrollLeft;
-
-document.addEventListener("mousedown", (e)=>{
-    const slider = document.getElementById('screenshotsContainer');
-    if(e.target.closest("#screenshotsContainer")){
-        isDown = true;
-        slider.style.cursor = "grabbing";
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-    }
-});
-
-document.addEventListener("mouseup", ()=>{
-    isDown = false;
-    document.getElementById('screenshotsContainer').style.cursor = "grab";
-});
-
-document.addEventListener("mousemove", (e)=>{
-    if(!isDown) return;
-    const slider = document.getElementById('screenshotsContainer');
-    e.preventDefault();
-    const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 2;
-    slider.scrollLeft = scrollLeft - walk;
-});
-
-/* 🔥 Preview drag */
-let isDragging = false, offsetX, offsetY;
-
-const previewBox = document.getElementById("previewBox");
-
-previewBox.addEventListener("mousedown", (e)=>{
-    isDragging = true;
-    offsetX = e.clientX - previewBox.offsetLeft;
-    offsetY = e.clientY - previewBox.offsetTop;
-});
-
-document.addEventListener("mouseup", ()=> isDragging = false);
-
-document.addEventListener("mousemove", (e)=>{
-    if(!isDragging) return;
-    previewBox.style.left = (e.clientX - offsetX) + "px";
-    previewBox.style.top = (e.clientY - offsetY) + "px";
-});
-
-/* 🔥 Hover Fix */
-let hoveringImage = false;
-
-function showPreview(src){
-    hoveringImage = true;
-    document.getElementById("previewImg").src = src;
-    previewBox.classList.add("show");
-}
-
-function hidePreview(){
-    hoveringImage = false;
-    setTimeout(()=>{
-        if(!previewBox.matches(":hover") && !hoveringImage){
-            previewBox.classList.remove("show");
-        }
-    },100);
-}
-
-previewBox.addEventListener("mouseleave", ()=>{
-    if(!hoveringImage){
-        previewBox.classList.remove("show");
-    }
-});
-
-/* 🔥 Data */
 async function loadData() {
     const res = await fetch(API_URL);
     const data = await res.json();
@@ -248,10 +172,29 @@ function openModal(game) {
         img.src = src;
         img.className = 'screenshot';
 
-        img.onmouseenter = ()=> showPreview(src);
-        img.onmouseleave = hidePreview;
+        /* 🔥 hover preview */
+        img.onmouseenter = () => {
+            document.getElementById('previewImg').src = src;
+            document.getElementById('previewBox').style.display = 'block';
+        };
+
+        img.onmouseleave = () => {
+            document.getElementById('previewBox').style.display = 'none';
+        };
 
         ss.appendChild(img);
+    });
+
+    const links = document.getElementById('linksContainer');
+    links.innerHTML = '';
+
+    game.links.forEach(l=>{
+        const a = document.createElement('a');
+        a.href = l.url;
+        a.target="_blank";
+        a.className="block bg-gray-800 p-5 rounded-xl flex justify-between";
+        a.innerHTML = `<span>${l.name}</span><i class="fa-solid fa-download"></i>`;
+        links.appendChild(a);
     });
 
     document.getElementById('gameModal').classList.remove('hidden');
@@ -259,7 +202,7 @@ function openModal(game) {
 
 function closeModal(){
     document.getElementById('gameModal').classList.add('hidden');
-    previewBox.classList.remove('show');
+    document.getElementById('previewBox').style.display = 'none';
 }
 
 function filterGames(){
