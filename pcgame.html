@@ -14,7 +14,17 @@ body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
 .card { transition: all 0.3s; }
 .card:hover { transform:translateY(-8px); box-shadow:0 20px 40px rgba(0,255,150,0.15); }
 
-/* 🔥 Scroll hidden */
+.box {
+    background:#111;
+    padding:20px;
+    border-radius:16px;
+    margin-bottom:20px;
+    box-shadow: 0 10px 25px rgba(0,255,150,0.2);
+}
+
+/* screenshots */
+#screenshotsWrapper { position: relative; }
+
 #screenshotsContainer {
     display: flex;
     gap: 16px;
@@ -23,42 +33,59 @@ body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
 }
 #screenshotsContainer::-webkit-scrollbar { display: none; }
 
-/* screenshot */
 .screenshot {
-    width: 320px;
-    height: 200px;
+    width: 260px;
+    height: 160px;
     object-fit: cover;
     border-radius: 12px;
     flex-shrink: 0;
     cursor: pointer;
+    transition: 0.3s;
 }
 
-/* 🔥 Right side popup */
-#previewBox {
-    position: fixed;
+.screenshot:hover {
+    transform: scale(1.2);
+    z-index: 10;
+}
+
+/* arrows */
+.arrow {
+    position: absolute;
     top: 50%;
-    right: 30px;
     transform: translateY(-50%);
-    width: 500px;
-    height: 300px;
-    background: #111;
-    border-radius: 16px;
-    overflow: hidden;
-    display: none;
-    z-index: 9999;
-    box-shadow: 0 0 40px rgba(0,0,0,0.9);
+    background: rgba(0,0,0,0.7);
+    border: none;
+    color: white;
+    font-size: 22px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 20;
 }
 
-#previewBox img {
+.arrow:hover { background: rgba(0,255,150,0.5); }
+
+.left-arrow { left: 0; }
+.right-arrow { right: 0; }
+
+/* preview */
+.preview-img {
     width: 100%;
-    height: 100%;
+    height: 300px;
     object-fit: cover;
+    border-radius: 12px;
 }
 
-/* modal shadow */
-.modal-box {
-    box-shadow: 0 0 60px rgba(0,0,0,0.9),
-                0 0 120px rgba(0,255,150,0.1);
+/* download */
+.download-link {
+    background:#1f2937;
+    transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(0,255,150,0.2);
+}
+
+.download-link:hover {
+    box-shadow: 0 5px 20px rgba(255,0,0,0.6);
+    transform: scale(1.02);
 }
 </style>
 </head>
@@ -82,40 +109,56 @@ body { background:#0f0f0f; color:white; font-family:system-ui, sans-serif; }
 <div id="gamesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
 </main>
 
-<!-- 🔥 Preview Popup -->
-<div id="previewBox">
-    <img id="previewImg" src="">
-</div>
+<div id="gameModal" class="hidden fixed inset-0 bg-black z-50 flex items-start justify-center">
 
-<!-- Modal -->
-<div id="gameModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+<div class="w-full h-full bg-gray-900 overflow-y-auto">
 
-<div class="modal-box bg-gray-900 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
-
-    <div class="p-6 border-b border-gray-800 flex justify-between items-start">
-        <div>
-            <h2 id="modalTitle" class="text-3xl font-bold"></h2>
-
-            <p class="text-emerald-400 text-sm mt-4">𝗔𝗯𝗼𝘂𝘁:</p>
-            <p id="modalAbout" class="text-gray-400"></p>
-        </div>
+    <div class="p-6 flex justify-between items-start">
+        <h2 id="modalTitle" class="text-3xl font-bold"></h2>
         <button onclick="closeModal()" class="text-4xl text-gray-500 hover:text-white">&times;</button>
     </div>
 
     <div class="p-6">
-        <h3 class="text-emerald-400 text-xl mb-4">Screenshot</h3>
 
-        <div id="screenshotsContainer"></div>
+        <div class="box">
+            <p class="text-emerald-400 text-sm">𝗔𝗯𝗼𝘂𝘁:</p>
+            <p id="modalAbout" class="text-gray-400 mt-2"></p>
+        </div>
 
-        <p class="text-emerald-400 text-sm mt-4">Description:</p>
-        <p id="modalDesc" class="text-gray-400"></p>
+        <div class="flex gap-6">
 
-        <p class="text-lime-500 text-sm mt-4">☆☆☆☆☆☆☆☆</p>
-        <p class="text-lime-200 text-sm mt-4">𝗨𝗽𝗹𝗼𝗮𝗱𝗲𝗿 𝗜𝗻𝗳𝗼:</p>
-        <p id="modalUploader" class="text-pink-500"></p>
+            <div class="box w-1/2">
+                <h3 class="text-emerald-400 text-xl mb-4">Screenshot</h3>
 
-        <h3 class="text-emerald-400 text-xl mt-8 mb-4">Download link</h3>
-        <div id="linksContainer" class="grid gap-4"></div>
+                <div id="screenshotsWrapper">
+                    <button class="arrow left-arrow" onclick="scrollLeft()">&#10094;</button>
+                    <button class="arrow right-arrow" onclick="scrollRight()">&#10095;</button>
+                    <div id="screenshotsContainer"></div>
+                </div>
+            </div>
+
+            <div class="box w-1/2">
+                <h3 class="text-emerald-400 text-xl mb-4">Preview</h3>
+                <img id="previewImage" class="preview-img" src="">
+            </div>
+
+        </div>
+
+        <div class="box">
+            <p class="text-emerald-400 text-sm">Description:</p>
+            <p id="modalDesc" class="text-gray-400 mt-2"></p>
+        </div>
+
+        <div class="box">
+            <p class="text-lime-200 text-sm">𝗨𝗽𝗹𝗼𝗮𝗱𝗲𝗿 𝗜𝗻𝗳𝗼:</p>
+            <p id="modalUploader" class="text-pink-500 mt-2"></p>
+        </div>
+
+        <div class="box">
+            <h3 class="text-emerald-400 text-xl mb-4">Download link</h3>
+            <div id="linksContainer" class="grid gap-4"></div>
+        </div>
+
     </div>
 
 </div>
@@ -168,22 +211,20 @@ function openModal(game) {
     const ss = document.getElementById('screenshotsContainer');
     ss.innerHTML = '';
 
-    game.screenshots.forEach(src=>{
+    game.screenshots.forEach((src, index)=>{
         const img = document.createElement('img');
         img.src = src;
         img.className = 'screenshot';
 
-        /* 🔥 hover preview */
         img.onmouseenter = () => {
-            document.getElementById('previewImg').src = src;
-            document.getElementById('previewBox').style.display = 'block';
-        };
-
-        img.onmouseleave = () => {
-            document.getElementById('previewBox').style.display = 'none';
+            document.getElementById('previewImage').src = src;
         };
 
         ss.appendChild(img);
+
+        if(index === 0){
+            document.getElementById('previewImage').src = src;
+        }
     });
 
     const links = document.getElementById('linksContainer');
@@ -193,7 +234,7 @@ function openModal(game) {
         const a = document.createElement('a');
         a.href = l.url;
         a.target="_blank";
-        a.className="block bg-gray-800 p-5 rounded-xl flex justify-between";
+        a.className="download-link block p-5 rounded-xl flex justify-between";
         a.innerHTML = `<span>${l.name}</span><i class="fa-solid fa-download"></i>`;
         links.appendChild(a);
     });
@@ -201,9 +242,19 @@ function openModal(game) {
     document.getElementById('gameModal').classList.remove('hidden');
 }
 
+/* 🔥 FIXED SCROLL */
+function scrollLeft(){
+    const container = document.getElementById('screenshotsContainer');
+    container.scrollLeft -= 300;
+}
+
+function scrollRight(){
+    const container = document.getElementById('screenshotsContainer');
+    container.scrollLeft += 300;
+}
+
 function closeModal(){
     document.getElementById('gameModal').classList.add('hidden');
-    document.getElementById('previewBox').style.display = 'none';
 }
 
 function filterGames(){
