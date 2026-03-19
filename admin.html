@@ -5,162 +5,218 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PC Games BD</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body { background:#0a0a0a; color:white; font-family:system-ui, sans-serif; }
     </style>
 </head>
 <body class="p-6 md:p-12">
 
-    <div class="max-w-5xl mx-auto">
-        <h1 class="text-4xl font-bold text-emerald-400 mb-10">অ্যাডমিন প্যানেল</h1>
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="max-w-md mx-auto bg-gray-900 p-8 rounded-2xl text-center">
+    <h2 class="text-2xl mb-6 text-emerald-400">Admin Login</h2>
 
-        <div class="bg-gray-900 p-8 rounded-2xl mb-12">
-            <h2 class="text-2xl mb-6">নতুন গেম যোগ করুন</h2>
+    <input id="username" placeholder="Username" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
+    <input id="password" type="password" placeholder="Password" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
 
-            <input id="title" placeholder="গেমের নাম *" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
+    <button onclick="checkLogin()" class="bg-emerald-600 px-10 py-4 rounded-xl font-bold w-full">
+        Login
+    </button>
 
-            <input id="about" placeholder="About" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
+    <p id="loginMsg" class="mt-4 text-red-500"></p>
+</div>
 
-            <input id="cover" placeholder="কভার ছবির URL *" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
+<!-- ADMIN PANEL (UNCHANGED) -->
+<div id="adminPanel" style="display:none;">
 
-            <div class="mb-6">
-                <label class="block mb-2">স্ক্রিনশট URL</label>
-                <textarea id="screenshots" rows="4" class="w-full p-4 bg-gray-800 border border-gray-700 rounded-xl"></textarea>
-            </div>
+<div class="max-w-5xl mx-auto">
+    <h1 class="text-4xl font-bold text-emerald-400 mb-10">অ্যাডমিন প্যানেল</h1>
 
-            <textarea id="desc" placeholder="Description" rows="3" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl"></textarea>
+    <div class="bg-gray-900 p-8 rounded-2xl mb-12">
+        <h2 class="text-2xl mb-6">নতুন গেম যোগ করুন</h2>
 
-            <!-- NEW UPLOADER INFO BOX -->
-            <input id="uploader" placeholder="Uploader Info (যিনি আপলোড করেছেন)" class="w-full p-4 mb-6 bg-gray-800 border border-gray-700 rounded-xl">
+        <input id="title" placeholder="গেমের নাম *" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
+        <input id="about" placeholder="About" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
+        <input id="cover" placeholder="কভার ছবির URL *" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl">
 
-            <div class="mb-8">
-                <label class="block mb-2">ডাউনলোড লিংক</label>
-                <textarea id="links" rows="5" class="w-full p-4 bg-gray-800 border border-gray-700 rounded-xl"></textarea>
-            </div>
-
-            <button id="saveBtn" onclick="saveGame()" class="bg-emerald-600 px-10 py-4 rounded-xl font-bold">গেম যোগ করুন</button>
-            <button id="updateBtn" onclick="updateGame()" class="bg-blue-600 px-10 py-4 rounded-xl font-bold hidden">Save Edit</button>
+        <div class="mb-6">
+            <label class="block mb-2">স্ক্রিনশট URL</label>
+            <textarea id="screenshots" rows="4" class="w-full p-4 bg-gray-800 border border-gray-700 rounded-xl"></textarea>
         </div>
 
-        <h2 class="text-2xl mb-6">বর্তমান গেমসমূহ</h2>
-        <div id="gameList" class="space-y-6"></div>
+        <textarea id="desc" placeholder="Description" rows="3" class="w-full p-4 mb-4 bg-gray-800 border border-gray-700 rounded-xl"></textarea>
+
+        <input id="uploader" placeholder="Uploader Info" class="w-full p-4 mb-6 bg-gray-800 border border-gray-700 rounded-xl">
+
+        <div class="mb-8">
+            <label class="block mb-2">ডাউনলোড লিংক</label>
+            <textarea id="links" rows="5" class="w-full p-4 bg-gray-800 border border-gray-700 rounded-xl"></textarea>
+        </div>
+
+        <button id="saveBtn" onclick="saveGame()" class="bg-emerald-600 px-10 py-4 rounded-xl font-bold">গেম যোগ করুন</button>
+        <button id="updateBtn" onclick="updateGame()" class="bg-blue-600 px-10 py-4 rounded-xl font-bold hidden">Save Edit</button>
     </div>
 
-    <script>
-        const BIN_ID = '69bb0918aa77b81da9f882b9';
-        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+    <h2 class="text-2xl mb-6">বর্তমান গেমসমূহ</h2>
+    <div id="gameList" class="space-y-6"></div>
+</div>
 
-        let games = [];
-        let editIndex = -1;
+</div>
 
-        async function loadGames() {
-            const res = await fetch(API_URL + '/latest');
-            const data = await res.json();
-            games = data.record.games || [];
-            renderList();
+<script>
+// 🔐 LOGIN JSON BIN
+const LOGIN_API = "https://api.jsonbin.io/v3/b/69bbdbc6aa77b81da9fb8086/latest";
+
+// 🎮 ORIGINAL BIN (UNCHANGED)
+const BIN_ID = '69bb0918aa77b81da9f882b9';
+const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+let games = [];
+let editIndex = -1;
+
+// 🔑 LOGIN FUNCTION
+async function checkLogin(){
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const msg = document.getElementById("loginMsg");
+
+    try{
+        const res = await fetch(LOGIN_API);
+        const data = await res.json();
+        const users = data.record.users || [];
+
+        const user = users.find(u => u.username === username && u.password === password);
+
+        if(!user){
+            msg.innerText = "Invalid Username or Password!";
+            return;
         }
 
-        function renderList() {
-            const container = document.getElementById('gameList');
-            container.innerHTML = '';
+        const today = new Date().toISOString().split('T')[0];
 
-            games.forEach((game, index) => {
-                const item = document.createElement('div');
-                item.className = 'bg-gray-900 p-6 rounded-xl flex justify-between items-start';
-                item.innerHTML = `
-                    <div class="flex-1">
-                        <h3 class="text-xl font-bold">${game.title}</h3>
-                        <p class="text-sm text-gray-400">${game.about || ''}</p>
-                        <p class="text-sm text-gray-500">${game.desc || ''}</p>
-                        <p class="text-xs text-emerald-400 mt-2">Uploaded by: ${game.uploader || 'Unknown'}</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="editGame(${index})" class="bg-blue-600 px-4 py-2 rounded">Edit</button>
-                        <button onclick="deleteGame(${index})" class="bg-red-600 px-4 py-2 rounded">মুছে ফেলুন</button>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
+        if(today > user.expire){
+            msg.innerText = "Account Expired!";
+            return;
         }
 
-        async function saveToBin() {
-            await fetch(API_URL, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ games })
-            });
-            loadGames();
-        }
+        // SUCCESS
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
 
-        function saveGame() {
-            const game = getFormData();
-            games.push(game);
-            saveToBin();
-            clearForm();
-        }
+        loadGames();
 
-        function editGame(index) {
-            const g = games[index];
-            document.getElementById('title').value = g.title;
-            document.getElementById('about').value = g.about || '';
-            document.getElementById('cover').value = g.cover;
-            document.getElementById('desc').value = g.desc || '';
-            document.getElementById('uploader').value = g.uploader || '';
+    }catch(e){
+        msg.innerText = "Login Error!";
+    }
+}
 
-            document.getElementById('screenshots').value = (g.screenshots || []).join('\n');
-            document.getElementById('links').value = (g.links || []).map(l => `${l.name} | ${l.url}`).join('\n');
+// ================= ORIGINAL CODE (UNCHANGED) =================
 
-            editIndex = index;
+async function loadGames() {
+    const res = await fetch(API_URL + '/latest');
+    const data = await res.json();
+    games = data.record.games || [];
+    renderList();
+}
 
-            document.getElementById('saveBtn').classList.add('hidden');
-            document.getElementById('updateBtn').classList.remove('hidden');
-        }
+function renderList() {
+    const container = document.getElementById('gameList');
+    container.innerHTML = '';
 
-        function updateGame() {
-            const game = getFormData();
-            games[editIndex] = game;
-            editIndex = -1;
+    games.forEach((game, index) => {
+        const item = document.createElement('div');
+        item.className = 'bg-gray-900 p-6 rounded-xl flex justify-between items-start';
+        item.innerHTML = `
+            <div class="flex-1">
+                <h3 class="text-xl font-bold">${game.title}</h3>
+                <p class="text-sm text-gray-400">${game.about || ''}</p>
+                <p class="text-sm text-gray-500">${game.desc || ''}</p>
+                <p class="text-xs text-emerald-400 mt-2">Uploaded by: ${game.uploader || 'Unknown'}</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="editGame(${index})" class="bg-blue-600 px-4 py-2 rounded">Edit</button>
+                <button onclick="deleteGame(${index})" class="bg-red-600 px-4 py-2 rounded">মুছে ফেলুন</button>
+            </div>
+        `;
+        container.appendChild(item);
+    });
+}
 
-            saveToBin();
-            clearForm();
+async function saveToBin() {
+    await fetch(API_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ games })
+    });
+    loadGames();
+}
 
-            document.getElementById('saveBtn').classList.remove('hidden');
-            document.getElementById('updateBtn').classList.add('hidden');
-        }
+function saveGame() {
+    const game = getFormData();
+    games.push(game);
+    saveToBin();
+    clearForm();
+}
 
-        function deleteGame(index) {
-            if (!confirm('ডিলিট করবেন?')) return;
-            games.splice(index, 1);
-            saveToBin();
-        }
+function editGame(index) {
+    const g = games[index];
+    document.getElementById('title').value = g.title;
+    document.getElementById('about').value = g.about || '';
+    document.getElementById('cover').value = g.cover;
+    document.getElementById('desc').value = g.desc || '';
+    document.getElementById('uploader').value = g.uploader || '';
 
-        function getFormData() {
-            return {
-                title: document.getElementById('title').value,
-                about: document.getElementById('about').value,
-                cover: document.getElementById('cover').value,
-                desc: document.getElementById('desc').value,
-                uploader: document.getElementById('uploader').value,
-                screenshots: document.getElementById('screenshots').value.split('\n').filter(Boolean),
-                links: document.getElementById('links').value.split('\n').map(l => {
-                    const p = l.split('|');
-                    return p.length >= 2 ? { name: p[0].trim(), url: p[1].trim() } : null;
-                }).filter(Boolean)
-            };
-        }
+    document.getElementById('screenshots').value = (g.screenshots || []).join('\n');
+    document.getElementById('links').value = (g.links || []).map(l => `${l.name} | ${l.url}`).join('\n');
 
-        function clearForm() {
-            document.getElementById('title').value = '';
-            document.getElementById('about').value = '';
-            document.getElementById('cover').value = '';
-            document.getElementById('desc').value = '';
-            document.getElementById('uploader').value = '';
-            document.getElementById('screenshots').value = '';
-            document.getElementById('links').value = '';
-        }
+    editIndex = index;
 
-        window.onload = loadGames;
-    </script>
+    document.getElementById('saveBtn').classList.add('hidden');
+    document.getElementById('updateBtn').classList.remove('hidden');
+}
+
+function updateGame() {
+    const game = getFormData();
+    games[editIndex] = game;
+    editIndex = -1;
+
+    saveToBin();
+    clearForm();
+
+    document.getElementById('saveBtn').classList.remove('hidden');
+    document.getElementById('updateBtn').classList.add('hidden');
+}
+
+function deleteGame(index) {
+    if (!confirm('ডিলিট করবেন?')) return;
+    games.splice(index, 1);
+    saveToBin();
+}
+
+function getFormData() {
+    return {
+        title: document.getElementById('title').value,
+        about: document.getElementById('about').value,
+        cover: document.getElementById('cover').value,
+        desc: document.getElementById('desc').value,
+        uploader: document.getElementById('uploader').value,
+        screenshots: document.getElementById('screenshots').value.split('\n').filter(Boolean),
+        links: document.getElementById('links').value.split('\n').map(l => {
+            const p = l.split('|');
+            return p.length >= 2 ? { name: p[0].trim(), url: p[1].trim() } : null;
+        }).filter(Boolean)
+    };
+}
+
+function clearForm() {
+    document.getElementById('title').value = '';
+    document.getElementById('about').value = '';
+    document.getElementById('cover').value = '';
+    document.getElementById('desc').value = '';
+    document.getElementById('uploader').value = '';
+    document.getElementById('screenshots').value = '';
+    document.getElementById('links').value = '';
+}
+</script>
+
 </body>
 </html>
