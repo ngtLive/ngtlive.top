@@ -35,7 +35,6 @@
                 <div>
                     <h2 id="modalTitle" class="text-3xl font-bold"></h2>
 
-                    <!-- ABOUT LABEL -->
                     <p class="text-emerald-400 text-sm mt-2">About:</p>
                     <p id="modalAbout" class="text-gray-400"></p>
                 </div>
@@ -45,9 +44,12 @@
                 <h3 class="text-emerald-400 text-xl mb-4">Screenshot</h3>
                 <div id="screenshotsContainer" class="flex gap-4 overflow-x-auto pb-4"></div>
 
-                <!-- DESCRIPTION LABEL -->
                 <p class="text-emerald-400 text-sm mt-4">Description:</p>
                 <p id="modalDesc" class="text-gray-400"></p>
+
+                <!-- NEW UPLOADER INFO (RED COLOR) -->
+                <p class="text-red-500 text-sm mt-4">Uploader:</p>
+                <p id="modalUploader" class="text-red-500"></p>
 
                 <h3 class="text-emerald-400 text-xl mt-8 mb-4">Download link</h3>
                 <div id="linksContainer" class="grid gap-4"></div>
@@ -104,7 +106,6 @@
                     <div class="p-5">
                         <h3 class="text-xl font-semibold">${game.title}</h3>
 
-                        <!-- ABOUT LABEL -->
                         <p class="text-emerald-400 text-xs mt-2">About:</p>
                         <p class="text-gray-400 text-sm line-clamp-2">${game.about || ''}</p>
                     </div>
@@ -119,6 +120,7 @@
             document.getElementById('modalAbout').textContent = game.about || '';
 
             document.getElementById('modalDesc').textContent = game.desc || 'কোনো বর্ণনা নেই';
+            document.getElementById('modalUploader').textContent = game.uploader || 'Unknown';
 
             const ssContainer = document.getElementById('screenshotsContainer');
             ssContainer.innerHTML = '';
